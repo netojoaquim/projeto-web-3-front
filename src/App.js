@@ -1,24 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import AppRoutes from './routes/AppRoute';
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CarrinhoContext';
+import { LayoutProvider } from './context/LayoutContext'; // Importe o novo Provider
+import CartOffcanvas from './components/CartOffcanvas'; // Importe o carrinho lateral
+import { BrowserRouter } from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+
+      <AuthProvider>
+        <CartProvider>
+          <LayoutProvider> {/* Envolve a aplicação */}
+            <AppRoutes />
+            <CartOffcanvas /> {/* Componente de layout que fica fora das rotas */}
+          </LayoutProvider>
+        </CartProvider>
+      </AuthProvider>
+
+    </BrowserRouter>
   );
 }
 
