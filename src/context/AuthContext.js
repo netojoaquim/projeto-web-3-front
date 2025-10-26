@@ -113,10 +113,14 @@ export const AuthProvider = ({ children }) => {
 
     // CRUD Endereços
     const addAddress = async (addressData) => {
-        if (!isAuthenticated || !user?.id) return { success: false, message: 'Usuário não autenticado.' };
+        const clientId = user?.id || JSON.parse(localStorage.getItem('user'))?.id;
+        if (!isAuthenticated || !clientId)
+            return { success: false, message: 'Usuário não autenticado.' };
+
         try {
-            await api.post(`/cliente/enderecos/${user.id}`, addressData);
-            await fetchClientData(user.id);
+            // Adiciona o clienteId ao body do request
+            await api.post('/cliente/endereco', { ...addressData, clienteId: clientId });
+            await fetchClientData(clientId);
             return { success: true, message: 'Endereço adicionado com sucesso!' };
         } catch (error) {
             const errorMessage = error.response?.data?.message || 'Erro ao salvar novo endereço.';
@@ -127,7 +131,7 @@ export const AuthProvider = ({ children }) => {
     const updateAddress = async (addressId, addressData) => {
         if (!isAuthenticated || !user?.id) return { success: false, message: 'Usuário não autenticado.' };
         try {
-            await api.put(`/cliente/enderecos/${addressId}`, addressData);
+            await api.patch(`/cliente/endereco/${addressId}`, addressData);
             await fetchClientData(user.id);
             return { success: true, message: 'Endereço atualizado com sucesso!' };
         } catch (error) {
@@ -139,7 +143,7 @@ export const AuthProvider = ({ children }) => {
     const deleteAddress = async (addressId) => {
         if (!isAuthenticated || !user?.id) return { success: false, message: 'Usuário não autenticado.' };
         try {
-            await api.delete(`/cliente/enderecos/${addressId}`);
+            await api.delete(`/cliente/endereco/${addressId}`);
             await fetchClientData(user.id);
             return { success: true, message: 'Endereço removido com sucesso!' };
         } catch (error) {

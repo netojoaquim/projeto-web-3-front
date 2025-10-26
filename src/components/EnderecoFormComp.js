@@ -5,7 +5,14 @@ import { useAuth } from '../context/AuthContext';
 const AddressForm = ({ addressData, onSuccess, onCancel }) => {
     const { addAddress, updateAddress } = useAuth();
     const [formData, setFormData] = useState({
-        apelido: '', cep: '', rua: '', numero: '', bairro: '', cidade: '', estado: ''
+        apelido: '',
+        cep: '',
+        rua: '',
+        numero: '',
+        bairro: '',
+        cidade: '',
+        estado: '',
+        padrao: false,
     });
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
@@ -14,15 +21,26 @@ const AddressForm = ({ addressData, onSuccess, onCancel }) => {
     // Atualiza formData somente quando addressData muda
     useEffect(() => {
         if (addressData) setFormData({ ...addressData });
-        else setFormData({ apelido: '', cep: '', rua: '', numero: '', bairro: '', cidade: '', estado: '' });
+        else setFormData({
+            apelido: '',
+            cep: '',
+            rua: '',
+            numero: '',
+            bairro: '',
+            cidade: '',
+            estado: '',
+            padrao: false
+        });
 
         setMessage('');
         setError(false);
-    }, [addressData]); // ✅ Só depende de addressData
+    }, [addressData]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({
+             ...prev,
+              [name]: type=== 'checkbox'? checked:value }));
     };
 
     const handleSubmit = async (e) => {
@@ -77,7 +95,7 @@ const AddressForm = ({ addressData, onSuccess, onCancel }) => {
 
             <Form.Group className="mb-3">
                 <Form.Label>Logradouro/Rua</Form.Label>
-                <Form.Control name="logradouro" value={formData.rua} onChange={handleChange} required disabled={loading} maxLength={255} />
+                <Form.Control name="rua" value={formData.rua} onChange={handleChange} required disabled={loading} maxLength={255} />
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -94,8 +112,17 @@ const AddressForm = ({ addressData, onSuccess, onCancel }) => {
                     <Form.Label>Estado (UF)</Form.Label>
                     <Form.Control name="estado" value={formData.estado} onChange={handleChange} required disabled={loading} maxLength={2} placeholder="EX: SP" />
                 </Form.Group>
+                <Form.Group className="mb-3">
+                <Form.Check
+                    type="checkbox"
+                    label="Endereço Padrão"
+                    name="padrao"
+                    checked={formData.padrao}
+                    onChange={handleChange}
+                    disabled={loading}
+                />
+            </Form.Group>
             </Row>
-
             <div className="d-flex justify-content-end gap-2">
                 <Button variant="secondary" onClick={onCancel} disabled={loading}>Cancelar</Button>
                 <Button variant="success" type="submit" disabled={loading}>

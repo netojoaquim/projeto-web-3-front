@@ -64,7 +64,7 @@ const EnderecosCliente = () => {
         };
 
         loadAddressesOnce();
-    
+
 
     }, [user?.id]);
     const handleAddClick = () => { setEditingAddress(null); setShowModal(true); };
@@ -113,10 +113,13 @@ const EnderecosCliente = () => {
                     {addresses.map(addr => (
                         <ListGroup.Item key={addr.id} className="d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 className="mb-1 text-dark">{addr.apelido || 'Endereço'}</h5>
+                                <h5 className="mb-1 text-dark">
+                                    {addr.apelido || 'Endereço'}{' '}
+                                    {addr.padrao && <span className="text-success" style={{ fontSize: '1.0rem' }}>— Endereço Padrão</span>}
+                                </h5>
                                 <p className="mb-0">{addr.rua}, {addr.numero} - {addr.bairro}</p>
                                 <p className="mb-0 text-muted" style={{ fontSize: '0.9rem' }}>
-                                    {addr.cidade} - {addr.estado}, CEP: {addr.cep}{addr.complemento && ` (${addr.complemento})`}
+                                    {addr.cidade} - {addr.estado}, CEP: {addr.cep}
                                 </p>
                             </div>
                             <div className="d-flex gap-2">
@@ -146,7 +149,7 @@ const EnderecosCliente = () => {
                     <Modal.Title className='text-danger'>Confirmação de Exclusão</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Tem certeza que deseja remover o endereço **{addressToDelete?.apelido || ''}**? Esta ação não pode ser desfeita.
+                    Tem certeza que deseja remover o endereço: <b>{addressToDelete?.apelido || ''}</b>? Esta ação não pode ser desfeita.
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleDeleteClose}>Cancelar</Button>
