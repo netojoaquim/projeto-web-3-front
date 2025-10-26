@@ -10,6 +10,7 @@ import Login from '../pages/Login';
 import DadosCliente from '../pages/DadosCliente';
 import EnderecoCliente from '../pages/EnderecoForm';
 import CreateProduct from '../pages/CreateProduct';
+import CheckoutPage from '../pages/CheckoutPage';
 import Register from '../pages/Register';
 import PrivateRoute from './PrivateRoutes';
 
@@ -42,7 +43,7 @@ const AppRoute = () => {
             />
             <Route 
                 path="/checkout" 
-                element={<MainLayout>{/* <Checkout /> */}</MainLayout>} 
+                element={<MainLayout>{<CheckoutPage />}</MainLayout>} 
             />
             <Route 
                 path="/cliente/dados" 

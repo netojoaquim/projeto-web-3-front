@@ -55,13 +55,15 @@ const Header = () => {
 
             {/* Área do Usuário */}
             {isAuthenticated ? (
-              <Dropdown align="end" className="w-25 w-lg-auto">
+              <Dropdown align="end" className="w-25 w-lg-auto ">
                 <Dropdown.Toggle
+                
                   variant="outline-secondary"
                   id="dropdown-user"
-                  className="d-flex align-items-center justify-content-center w-100"
+                  className="d-flex align-items-center justify-content-center text-truncate w-100"
                 >
-                  <i className="bi bi-person-circle me-1"></i> Olá, {user?.nome_completo || 'Usuário'}
+                  <i className="bi bi-person-circle me-1 text-truncate text-truncate "></i> 
+                  Meu perfil
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>

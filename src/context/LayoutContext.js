@@ -7,7 +7,7 @@ export const LayoutProvider = ({ children }) => {
 
   const handleCloseCart = () => setShowCart(false);
   const handleShowCart = () => setShowCart(true);
-  const toggleCart = () => setShowCart(s => !s); // Alterna estado
+  const toggleCart = () => setShowCart(s => !s);
 
   return (
     <LayoutContext.Provider value={{ showCart, handleCloseCart, handleShowCart, toggleCart }}>

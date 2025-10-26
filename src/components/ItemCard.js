@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { Card, Button, Modal, Form, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import DefaultImage from '../assets/semImagem.jpg';
-import { useAuth } from '../context/AuthContext'; // 🔐 Para pegar o id do cliente logado
+import { useAuth } from '../context/AuthContext'; 
+import {useCart} from '../context/CarrinhoContext';
 
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 const DEFAULT_IMAGE_URL = DefaultImage;
 
 const ItemCard = ({ item }) => {
     const [showModal, setShowModal] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [feedback, setFeedback] = useState(null);
-    const { user } = useAuth(); // 🔐 Pega o cliente logado (supondo que tenha user.id ou user.cliente.id)
+    const { user } = useAuth();
+    const { dispatch } = useCart();     
 
     const handleClose = () => {
         setShowModal(false);
@@ -20,8 +22,6 @@ const ItemCard = ({ item }) => {
     };
 
     const handleShow = () => setShowModal(true);
-
-    // ✅ Função para adicionar ao carrinho via backend
     const handleAddToCart = async () => {
         if (!user?.id && !user?.clienteId) {
             setFeedback({ type: 'danger', message: 'Usuário não identificado. Faça login novamente.' });
@@ -38,6 +38,15 @@ const ItemCard = ({ item }) => {
                     quantidade: quantity
                 }
             );
+            const updatedCartData = response.data;
+            dispatch({
+              type: 'SET_CART',
+              payload: {
+                cartId: updatedCartData.id,
+                items: updatedCartData.itens || [],
+                total: updatedCartData.total || 0,
+              },
+            });
 
             setFeedback({
                 type: 'success',

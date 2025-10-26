@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
 
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const initialState = {
   cartId: null,
@@ -53,10 +53,15 @@ export const CartProvider = ({ children }) => {
         type: 'SET_CART',
         payload: {
           cartId: res.data.id,
-          items: res.data.items || [],
-          total: res.data.total || 0,
+          items: (res.data.items || []).map(item => ({
+            ...item,
+            quantidade: Number(item.quantidade),
+            valor: item.valor,
+          })),
+          total: Number(res.data.total) || 0,
         },
       });
+
     } catch (err) {
       console.error('Erro ao carregar carrinho:', err);
     }
@@ -68,7 +73,7 @@ export const CartProvider = ({ children }) => {
     try {
       const res = await axios.post(`${BASE_URL}/carrinho/${user.id}/item`, {
         produtoId: productId,
-        quantidade,
+        quantidade: Number(quantidade),
       });
       console.log('Item adicionado:', res.data);
       dispatch({ type: 'ADD_ITEM', payload: res.data });
@@ -76,13 +81,13 @@ export const CartProvider = ({ children }) => {
       console.error('Erro ao adicionar item:', err);
     }
   };
-
+  const recalcTotal = (items) => items.reduce((sum, item) => sum + Number(item.valor) * Number(item.quantidade), 0);
   // PATCH: atualiza item do carrinho
   const updateItem = async (itemId, quantidade) => {
     if (!user?.id) return;
     try {
       const res = await axios.patch(`${BASE_URL}/carrinho/${user.id}/item/${itemId}`, {
-        quantidade,
+        quantidade:Number(quantidade),
       });
       console.log('Item atualizado:', res.data);
       dispatch({ type: 'UPDATE_ITEM', payload: res.data });
