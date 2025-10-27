@@ -38,17 +38,10 @@ export const CartProvider = ({ children }) => {
   const { user } = useAuth();
   const [cartState, dispatch] = useReducer(cartReducer, initialState);
 
-  // GET: busca carrinho do cliente
   const fetchCart = async () => {
-    if (!user?.id) {
-      console.log('fetchCart abortado: usuário não definido');
-      return;
-    }
-
+    if (!user?.id) return;
     try {
-      console.log('Buscando carrinho do cliente:', user.id);
       const res = await axios.get(`${BASE_URL}/carrinho/${user.id}`);
-      console.log('Carrinho retornado:', res.data);
       dispatch({
         type: 'SET_CART',
         payload: {
@@ -61,54 +54,86 @@ export const CartProvider = ({ children }) => {
           total: Number(res.data.total) || 0,
         },
       });
-
     } catch (err) {
       console.error('Erro ao carregar carrinho:', err);
     }
   };
 
-  // POST: adiciona item ao carrinho
-  const addToCart = async (productId, quantidade) => {
-    if (!user?.id) return;
-    try {
-      const res = await axios.post(`${BASE_URL}/carrinho/${user.id}/item`, {
-        produtoId: productId,
-        quantidade: Number(quantidade),
-      });
-      console.log('Item adicionado:', res.data);
-      dispatch({ type: 'ADD_ITEM', payload: res.data });
-    } catch (err) {
-      console.error('Erro ao adicionar item:', err);
+  // NOVO: adiciona item ao carrinho verificando estoque
+  const addToCartWithStock = async (produto, quantidade) => {
+  if (!user?.id) return { success: false, message: 'Usuário não identificado' };
+
+  // verifica item existente
+  const existingItem = cartState.items.find(i => i.produto.id === produto.id);
+  const currentQty = existingItem ? existingItem.quantidade : 0;
+  const newQty = currentQty + quantidade;
+
+  if (newQty > produto.estoque) {
+    return {
+      success: false,
+      message: `Não é possível adicionar mais de ${produto.estoque} unidades deste produto.`,
+    };
+  }
+
+  // **atualiza o estado local imediatamente**
+  if (existingItem) {
+    dispatch({ type: 'UPDATE_ITEM', payload: { ...existingItem, quantidade: newQty } });
+  } else {
+    const tempItem = { id: `temp-${produto.id}`, quantidade, produto };
+    dispatch({ type: 'ADD_ITEM', payload: tempItem });
+  }
+
+  try {
+    const res = await axios.post(`${BASE_URL}/carrinho/${user.id}/item`, {
+      produtoId: produto.id,
+      quantidade,
+    });
+
+    // substitui o item temporário pelo retornado do backend
+    if (existingItem) {
+      dispatch({ type: 'UPDATE_ITEM', payload: res.data });
+    } else {
+      dispatch({ type: 'REMOVE_ITEM', payload: `temp-${produto.id}` });
+      dispatch({ type: 'ADD_ITEM', payload: { ...res.data, produto } });
     }
-  };
-  const recalcTotal = (items) => items.reduce((sum, item) => sum + Number(item.valor) * Number(item.quantidade), 0);
-  // PATCH: atualiza item do carrinho
+
+    return { success: true, message: `${produto.nome} adicionado ao carrinho!` };
+  } catch (err) {
+    console.error(err);
+
+    // reverte o estado local caso falhe
+    if (existingItem) {
+      dispatch({ type: 'UPDATE_ITEM', payload: existingItem });
+    } else {
+      dispatch({ type: 'REMOVE_ITEM', payload: `temp-${produto.id}` });
+    }
+
+    return { success: false, message: 'Erro ao adicionar ao carrinho.' };
+  }
+};
+
   const updateItem = async (itemId, quantidade) => {
     if (!user?.id) return;
     try {
       const res = await axios.patch(`${BASE_URL}/carrinho/${user.id}/item/${itemId}`, {
-        quantidade:Number(quantidade),
+        quantidade: Number(quantidade),
       });
-      console.log('Item atualizado:', res.data);
       dispatch({ type: 'UPDATE_ITEM', payload: res.data });
     } catch (err) {
       console.error('Erro ao atualizar item:', err);
     }
   };
 
-  // DELETE: remove item do carrinho
   const removeFromCart = async (itemId) => {
     if (!user?.id) return;
     try {
       await axios.delete(`${BASE_URL}/carrinho/${user.id}/item/${itemId}`);
-      console.log('Item removido:', itemId);
       dispatch({ type: 'REMOVE_ITEM', payload: itemId });
     } catch (err) {
       console.error('Erro ao remover item:', err);
     }
   };
 
-  // Chama fetchCart automaticamente quando o usuário estiver definido
   useEffect(() => {
     if (user?.id) {
       fetchCart();
@@ -120,10 +145,10 @@ export const CartProvider = ({ children }) => {
       value={{
         cartState,
         fetchCart,
-        addToCart,
+        addToCartWithStock,
         updateItem,
         removeFromCart,
-        dispatch, // opcional: se precisar direto do dispatch
+        dispatch,
       }}
     >
       {children}

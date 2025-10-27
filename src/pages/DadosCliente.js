@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const ClientData = () => {
     const { user, fetchClientData, updateClientData, loading: authLoading } = useAuth();
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         nome_completo: '',
@@ -39,6 +41,9 @@ const ClientData = () => {
                     numero_telefone: data.numero_telefone || '',
                     data_nascimento: formatDate(data.data_nascimento),
                 });
+                setTimeout(() => {
+                    navigate('/'); // ou qualquer rota desejada
+                }, 1500);
                 setError(false);
                 setMessage('');
             } else {

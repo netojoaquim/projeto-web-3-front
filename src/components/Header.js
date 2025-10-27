@@ -1,14 +1,20 @@
-import React from 'react';
-import { Navbar, Container, Nav, Button, Badge, Dropdown } from 'react-bootstrap';
+
+import { Navbar, Container, Nav, Button, Badge, Modal } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useCart } from '../context/CarrinhoContext';
 import { useAuth } from '../context/AuthContext';
 import { useLayout } from '../context/LayoutContext';
+import { useState } from 'react';
 
 const Header = () => {
   const { isAuthenticated, logout, user } = useAuth();
+  console.log('Usuário autenticado:', user);
   const { cartState } = useCart();
   const { handleShowCart } = useLayout();
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const handleCloseProfileModal = () => setShowProfileModal(false);
+  const handleShowProfileModal = () => setShowProfileModal(true);
+
 
   const totalItems = cartState.items.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -39,7 +45,7 @@ const Header = () => {
             <Button
               variant="primary"
               onClick={handleShowCart}
-              className="position-relative w-25 w-lg-auto d-flex align-items-center justify-content-center"
+                className="d-flex align-items-center justify-content-center text-truncate w-100"
             >
               <i className="bi bi-cart-fill me-1"></i> Carrinho
               {totalItems > 0 && (
@@ -55,40 +61,15 @@ const Header = () => {
 
             {/* Área do Usuário */}
             {isAuthenticated ? (
-              <Dropdown align="end" className="w-25 w-lg-auto ">
-                <Dropdown.Toggle
-                
-                  variant="outline-secondary"
-                  id="dropdown-user"
-                  className="d-flex align-items-center justify-content-center text-truncate w-100"
-                >
-                  <i className="bi bi-person-circle me-1 text-truncate text-truncate "></i> 
-                  Meu perfil
-                </Dropdown.Toggle>
+              <Button
+                variant="primary"
+                className="d-flex align-items-center justify-content-center text-truncate w-100"
+                onClick={handleShowProfileModal}
+              >
+                <i className="bi bi-person-circle me-1"></i>
+                Meu perfil
+              </Button>
 
-                <Dropdown.Menu>
-                  {/* NOVO: Link para Atualizar Dados */}
-                  <LinkContainer to="/cliente/dados">
-                    <Dropdown.Item>
-                      <i className="bi bi-person-gear me-2"></i> Meus Dados
-                    </Dropdown.Item>
-                  </LinkContainer>
-
-                  {/* NOVO: Link para Endereços */}
-                  <LinkContainer to="/cliente/enderecos">
-                    <Dropdown.Item>
-                      <i className="bi bi-geo-alt me-2"></i> Meus Endereços
-                    </Dropdown.Item>
-                  </LinkContainer>
-
-                  <Dropdown.Divider />
-                  
-                  {/* Ação de Sair */}
-                  <Dropdown.Item onClick={handleLogout} className="text-danger">
-                    <i className="bi bi-box-arrow-right me-2"></i> Sair
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
             ) : (
               // Se não logado: Botão de Login
               // Adicionamos um botão de Cadastro também, já que o modal foi removido
@@ -108,6 +89,58 @@ const Header = () => {
           </Nav>
         </Navbar.Collapse>
       </Container>
+      <Modal
+  show={showProfileModal}
+  onHide={handleCloseProfileModal}
+  centered
+  className="rounded-3"
+>
+  <Modal.Header closeButton>
+    <Modal.Title>
+      👋 Olá,{" "}
+      <strong>
+        {(() => {
+          const nomeCompleto =
+            user?.nomeCliente ||
+            user?.nome ||
+            user?.username ||
+            user?.email?.split("@")[0] ||
+            "usuário";
+          return nomeCompleto.split(" ")[0];
+        })()}
+      </strong>
+      !
+    </Modal.Title>
+  </Modal.Header>
+
+  <Modal.Body>
+    <div className="d-grid gap-2">
+      <LinkContainer to="/cliente/dados" onClick={handleCloseProfileModal}>
+        <Button variant="outline-primary" className="text-start">
+          <i className="bi bi-person-gear me-2"></i> Meus Dados
+        </Button>
+      </LinkContainer>
+
+      <LinkContainer to="/cliente/enderecos" onClick={handleCloseProfileModal}>
+        <Button variant="outline-primary" className="text-start">
+          <i className="bi bi-geo-alt me-2"></i> Meus Endereços
+        </Button>
+      </LinkContainer>
+
+      <Button
+        variant="outline-danger"
+        className="text-start"
+        onClick={() => {
+          handleLogout();
+          handleCloseProfileModal();
+        }}
+      >
+        <i className="bi bi-box-arrow-right me-2"></i> Sair
+      </Button>
+    </div>
+  </Modal.Body>
+</Modal>
+
     </Navbar>
   );
 };
