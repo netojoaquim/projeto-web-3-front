@@ -42,7 +42,7 @@ const ClientData = () => {
                     data_nascimento: formatDate(data.data_nascimento),
                 });
                 setTimeout(() => {
-                    navigate('/'); // ou qualquer rota desejada
+                     // ou qualquer rota desejada
                 }, 1500);
                 setError(false);
                 setMessage('');
@@ -80,7 +80,8 @@ const ClientData = () => {
 
         if (result.success) {
             setMessage(result.message);
-            await fetchClientData(user.id); // garante dados atualizados
+            await fetchClientData(user.id); 
+            navigate('/');
         } else {
             setError(true);
             setMessage(result.message);
