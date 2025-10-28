@@ -1,16 +1,12 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-
-// Importe o novo componente de Layout
 import MainLayout from '../components/MainLayout'; 
-
-// Importe suas páginas
 import Home from '../pages/Home';
 import Login from '../pages/Login';
 import DadosCliente from '../pages/DadosCliente';
 import EnderecoCliente from '../pages/EnderecoForm';
 import CreateProduct from '../pages/CreateProduct';
-import CheckoutPage from '../pages/CheckoutPage';
+//import CheckoutPage from '../pages/CheckoutPage';
 import Register from '../pages/Register';
 import PrivateRoute from './PrivateRoutes';
 
@@ -43,7 +39,7 @@ const AppRoute = () => {
             />
             <Route 
                 path="/checkout" 
-                element={<MainLayout>{<CheckoutPage />}</MainLayout>} 
+                // element={<MainLayout>{<CheckoutPage />}</MainLayout>} 
             />
             <Route 
                 path="/cliente/dados" 
