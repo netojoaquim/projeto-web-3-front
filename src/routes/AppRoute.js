@@ -1,11 +1,11 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import MainLayout from '../components/MainLayout'; 
-import Home from '../pages/Home';
-import Login from '../pages/Login';
+import { Route, Routes } from 'react-router-dom';
+import MainLayout from '../components/MainLayout';
+import Categoria from '../pages/CategoriaForm';
+import CreateProduct from '../pages/CreateProduct';
 import DadosCliente from '../pages/DadosCliente';
 import EnderecoCliente from '../pages/EnderecoForm';
-import CreateProduct from '../pages/CreateProduct';
+import Home from '../pages/Home';
+import Login from '../pages/Login';
 import ProdutoForm from '../pages/ProdutoForm';
 //import CheckoutPage from '../pages/CheckoutPage';
 import Register from '../pages/Register';
@@ -52,6 +52,10 @@ const AppRoute = () => {
             <Route 
                 path="/produto/novo" 
                 element={<MainLayout>{<CreateProduct/>}</MainLayout>} 
+            />
+            <Route 
+                path="produto/categoria" 
+                element={<MainLayout>{<Categoria/>}</MainLayout>} 
             />
         </Route>
 

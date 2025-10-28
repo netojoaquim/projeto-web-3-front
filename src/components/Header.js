@@ -1,10 +1,10 @@
 
-import { Navbar, Container, Nav, Button, Badge, Modal } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
-import { useCart } from '../context/CarrinhoContext';
-import { useAuth } from '../context/AuthContext';
-import { useLayout } from '../context/LayoutContext';
 import { useState } from 'react';
+import { Badge, Button, Container, Modal, Nav, Navbar } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CarrinhoContext';
+import { useLayout } from '../context/LayoutContext';
 
 const Header = () => {
   const { isAuthenticated, logout, user } = useAuth();
@@ -18,11 +18,8 @@ const Header = () => {
 
   const totalItems = cartState.items.reduce((acc, item) => acc + item.quantity, 0);
 
-  // Função para garantir que o cliente é redirecionado após o logout
   const handleLogout = () => {
     logout();
-    // Nota: Como não usamos useNavigate neste componente, o logout pode ser tratado puramente pelo contexto.
-    // Se precisar de redirecionamento imediato, é recomendado usar 'useNavigate' aqui.
   };
 
   return (
@@ -97,7 +94,7 @@ const Header = () => {
 >
   <Modal.Header closeButton>
     <Modal.Title>
-      👋 Olá,{" "}
+      Olá,{" "}
       <strong>
         {(() => {
           const nomeCompleto =
@@ -116,19 +113,19 @@ const Header = () => {
   <Modal.Body>
     <div className="d-grid gap-2">
       <LinkContainer to="/cliente/dados" onClick={handleCloseProfileModal}>
-        <Button variant="outline-primary" className="text-start">
+        <Button variant="primary" className="text-start">
           <i className="bi bi-person-gear me-2"></i> Meus Dados
         </Button>
       </LinkContainer>
 
       <LinkContainer to="/cliente/enderecos" onClick={handleCloseProfileModal}>
-        <Button variant="outline-primary" className="text-start">
+        <Button variant="primary" className="text-start">
           <i className="bi bi-geo-alt me-2"></i> Meus Endereços
         </Button>
       </LinkContainer>
 
       <Button
-        variant="outline-danger"
+        variant="danger"
         className="text-start"
         onClick={() => {
           handleLogout();
