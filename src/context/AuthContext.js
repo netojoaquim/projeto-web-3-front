@@ -7,11 +7,15 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [userRole, setUserRole] = useState('null');
+    
+
 
     // Restaura usuário e token do localStorage
     useEffect(() => {
         const token = localStorage.getItem('token');
         const userDataString = localStorage.getItem('user');
+        
 
         console.log('AuthContext init -> token:', token);
         console.log('AuthContext init -> userDataString:', userDataString);
@@ -21,10 +25,11 @@ export const AuthProvider = ({ children }) => {
         if (token && userDataString) {
             try {
                 const userData = JSON.parse(userDataString);
-                console.log('AuthContext -> userData parseado:', userData);
+                //console.log('AuthContext -> userData parseado:', userData);
                 setIsAuthenticated(true);
                 setUser(userData);
                 api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                setUserRole(userData.role || 'null');
             } catch (e) {
                 console.error("Erro ao restaurar usuário:", e);
                 logout();
@@ -46,6 +51,7 @@ export const AuthProvider = ({ children }) => {
 
             setIsAuthenticated(true);
             setUser(usuario);
+            setUserRole(usuario.role || 'null');
 
             return { success: true, message: 'Login realizado com sucesso!' };
         } catch (error) {
@@ -158,6 +164,7 @@ export const AuthProvider = ({ children }) => {
                 isAuthenticated,
                 user,
                 loading,
+                userRole,
                 login,
                 logout,
                 register,
@@ -166,6 +173,7 @@ export const AuthProvider = ({ children }) => {
                 addAddress,
                 updateAddress,
                 deleteAddress,
+                   
             }}
         >
             {children}

@@ -9,7 +9,6 @@ import CreateProduct from '../pages/CreateProduct';
 //import CheckoutPage from '../pages/CheckoutPage';
 import Register from '../pages/Register';
 import PrivateRoute from './PrivateRoutes';
-
 const AppRoute = () => {
  return (
     <Routes>
@@ -34,10 +33,6 @@ const AppRoute = () => {
         {/* Envolve as rotas protegidas (PrivateRoutes) dentro do MainLayout */}
         <Route element={<PrivateRoute />}>
             <Route 
-                path="/produto/novo" 
-                element={<MainLayout>{<CreateProduct></CreateProduct>}</MainLayout>} 
-            />
-            <Route 
                 path="/checkout" 
                 // element={<MainLayout>{<CheckoutPage />}</MainLayout>} 
             />
@@ -48,6 +43,13 @@ const AppRoute = () => {
             <Route 
                 path="/cliente/enderecos" 
                 element={<MainLayout>{ <EnderecoCliente />}</MainLayout>} 
+            />
+        </Route>
+
+        <Route element={<PrivateRoute allowedRoles={['admin']}/>}>
+            <Route 
+                path="/produto/novo" 
+                element={<MainLayout>{<CreateProduct></CreateProduct>}</MainLayout>} 
             />
         </Route>
 
