@@ -22,19 +22,19 @@ const ClientData = () => {
     const formatDate = (isoString) => isoString ? isoString.split('T')[0] : '';
 
     useEffect(() => {
-        console.log('ClientData useEffect disparou -> authLoading:', authLoading, 'user.id:', user?.id);
+        //console.log('ClientData useEffect disparou -> authLoading:', authLoading, 'user.id:', user?.id);
 
         if (authLoading || !user?.id || hasLoaded) return;
 
         const loadData = async () => {
             setLoading(true);
-            console.log('ClientData -> chamando fetchClientData com user.id:', user.id);
+            //console.log('ClientData -> chamando fetchClientData com user.id:', user.id);
 
             const result = await fetchClientData(user.id);
 
             if (result.success) {
                 const data = result.data;
-                console.log('ClientData -> dados carregados:', data);
+                //console.log('ClientData -> dados carregados:', data);
                 setFormData({
                     nome_completo: data.nome_completo || '',
                     email: data.email || '',

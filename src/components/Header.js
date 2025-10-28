@@ -8,7 +8,7 @@ import { useState } from 'react';
 
 const Header = () => {
   const { isAuthenticated, logout, user } = useAuth();
-  console.log('Usuário autenticado:', user);
+  //console.log('Usuário autenticado:', user);
   const { cartState } = useCart();
   const { handleShowCart } = useLayout();
   const [showProfileModal, setShowProfileModal] = useState(false);

@@ -41,7 +41,7 @@ const Home = () => {
         const fetchCategories = async () => {
             try {
                 const response = await api.get(CATEGORIES_ENDPOINT);
-                console.log("📦 Categorias retornadas pela API:", response.data);
+                //console.log("categorias retornadas pela api:", response.data);
                 setCategorias(response.data || response.data);
             } catch (err) {
                 console.error("Erro ao buscar categorias:", err);

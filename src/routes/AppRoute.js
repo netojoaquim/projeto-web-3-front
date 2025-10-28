@@ -6,6 +6,7 @@ import Login from '../pages/Login';
 import DadosCliente from '../pages/DadosCliente';
 import EnderecoCliente from '../pages/EnderecoForm';
 import CreateProduct from '../pages/CreateProduct';
+import ProdutoForm from '../pages/ProdutoForm';
 //import CheckoutPage from '../pages/CheckoutPage';
 import Register from '../pages/Register';
 import PrivateRoute from './PrivateRoutes';
@@ -31,11 +32,11 @@ const AppRoute = () => {
         <Route path="/" element={<MainLayout><Home /></MainLayout>} />
         
         {/* Envolve as rotas protegidas (PrivateRoutes) dentro do MainLayout */}
-        <Route element={<PrivateRoute />}>
-            <Route 
+        <Route element={<PrivateRoute/>}>
+            {/* <Route 
                 path="/checkout" 
-                // element={<MainLayout>{<CheckoutPage />}</MainLayout>} 
-            />
+                element={<MainLayout>{<CheckoutPage />}</MainLayout>} 
+            /> */}
             <Route 
                 path="/cliente/dados" 
                 element={<MainLayout>{ <DadosCliente />}</MainLayout>} 
@@ -44,13 +45,19 @@ const AppRoute = () => {
                 path="/cliente/enderecos" 
                 element={<MainLayout>{ <EnderecoCliente />}</MainLayout>} 
             />
+            <Route 
+                path="/produto" 
+                element={<MainLayout>{<ProdutoForm/>}</MainLayout>} 
+            />
+            <Route 
+                path="/produto/novo" 
+                element={<MainLayout>{<CreateProduct/>}</MainLayout>} 
+            />
         </Route>
 
         <Route element={<PrivateRoute allowedRoles={['admin']}/>}>
-            <Route 
-                path="/produto/novo" 
-                element={<MainLayout>{<CreateProduct></CreateProduct>}</MainLayout>} 
-            />
+            
+            
         </Route>
 
         {/* Rota de Not Found */}

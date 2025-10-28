@@ -31,7 +31,7 @@ const CartOffcanvas = () => {
           },
         });
       } catch (err) {
-        console.error('Erro ao carregar carrinho:', err);
+        //console.error('Erro ao carregar carrinho:', err);
       }
     };
 

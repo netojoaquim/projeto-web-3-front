@@ -8,20 +8,12 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [userRole, setUserRole] = useState('null');
-    
 
-
-    // Restaura usuário e token do localStorage
     useEffect(() => {
         const token = localStorage.getItem('token');
         const userDataString = localStorage.getItem('user');
-        
-
-        console.log('AuthContext init -> token:', token);
-        console.log('AuthContext init -> userDataString:', userDataString);
-
-
-
+        //console.log('AuthContext init -> token:', token);
+        //console.log('AuthContext init -> userDataString:', userDataString);
         if (token && userDataString) {
             try {
                 const userData = JSON.parse(userDataString);
@@ -99,9 +91,7 @@ export const AuthProvider = ({ children }) => {
             return { success: false, message: errorMessage };
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-
     }, [user]);
-
 
     const updateClientData = async (updatedData) => {
         if (!isAuthenticated || !user?.id)
@@ -116,15 +106,13 @@ export const AuthProvider = ({ children }) => {
             return { success: false, message: errorMessage };
         }
     };
-
-    // CRUD Endereços
+    // CRUD enderecos
     const addAddress = async (addressData) => {
         const clientId = user?.id || JSON.parse(localStorage.getItem('user'))?.id;
         if (!isAuthenticated || !clientId)
             return { success: false, message: 'Usuário não autenticado.' };
 
         try {
-            // Adiciona o clienteId ao body do request
             await api.post('/cliente/endereco', { ...addressData, clienteId: clientId });
             await fetchClientData(clientId);
             return { success: true, message: 'Endereço adicionado com sucesso!' };
@@ -157,6 +145,44 @@ export const AuthProvider = ({ children }) => {
             return { success: false, message: errorMessage };
         }
     };
+    //produtos
+    // LISTAR TODOS OS PRODUTOS
+    const fetchAllProducts = async () => {
+        try {
+            const response = await api.get('/produto'); // sua rota backend que retorna todos os produtos
+            return { success: true, data: response.data.data }; // ajuste dependendo do formato do backend
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Erro ao carregar produtos.';
+            return { success: false, message: errorMessage };
+        }
+    };
+
+    // CRIAR OU ATUALIZAR PRODUTO
+    const saveProduct = async (id, productData) => {
+        try {
+            if (id) {
+                await api.patch(`/produto/${id}`, productData);
+            } else {
+                await api.post('/produto', productData);
+            }
+            return { success: true };
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Erro ao salvar produto.';
+            return { success: false, message: errorMessage };
+        }
+    };
+
+    // DELETAR PRODUTO
+    const deleteProduct = async (id) => {
+        try {
+            await api.delete(`/produto/${id}`);
+            return { success: true };
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Erro ao excluir produto.';
+            return { success: false, message: errorMessage };
+        }
+    };
+
 
     return (
         <AuthContext.Provider
@@ -173,7 +199,10 @@ export const AuthProvider = ({ children }) => {
                 addAddress,
                 updateAddress,
                 deleteAddress,
-                   
+                fetchAllProducts,
+                saveProduct,
+                deleteProduct
+
             }}
         >
             {children}
