@@ -95,7 +95,7 @@ const ProdutoFormComp = ({ produtoData, onCancel }) => {
         descricao: formData.descricao,
         preco: parsePrice(formData.preco),
         estoque: parseInt(formData.estoque, 10),
-        categoriaId: parseInt(formData.categoriaId, 10),
+        categoria: { id: parseInt(formData.categoriaId, 10) }, // ← objeto, não só o id
         ativo: formData.ativo,
         imagem: finalFilename,
       };

@@ -60,8 +60,6 @@ const AppRoute = () => {
         </Route>
 
         <Route element={<PrivateRoute allowedRoles={['admin']}/>}>
-            
-            
         </Route>
 
         {/* Rota de Not Found */}
