@@ -264,6 +264,55 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: errorMessage };
     }
   };
+  //clientes
+  //busca
+  const fetchClientes = async () => {
+    try {
+      const response = await api.get("/cliente");
+      const clientes = response.data.data || response.data; // ajusta conforme backend
+      console.log(clientes);
+      return { success: true, data: clientes };
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Erro ao carregar clientes.";
+      return { success: false, message: errorMessage };
+    }
+  };
+
+  const saveCliente = async (id, clienteData) => {
+    try {
+      await api.patch(`/cliente/${id}`, clienteData);
+      return { success: true, message: "Cliente atualizado com sucesso!" };
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Erro ao salvar cliente.";
+      return { success: false, message: errorMessage };
+    }
+  };
+  //update role e ativo
+  const updateClienteRoleAtivo = async (id, role, ativo) => {
+    try {
+      const response = await api.patch(`/cliente/${id}`, { role, ativo });
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.error("Erro ao atualizar role/ativo do cliente:", error);
+      return {
+        success: false,
+        message: error.response?.data?.message || "Erro ao atualizar cliente.",
+      };
+    }
+  };
+
+  const deleteCliente = async (id) => {
+    try {
+      await api.patch(`/cliente/${id}`, { ativo: false });
+      return { success: true, message: "Cliente desativado com sucesso!" };
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Erro ao desativar cliente.";
+      return { success: false, message: errorMessage };
+    }
+  };
 
   return (
     <AuthContext.Provider
@@ -286,6 +335,10 @@ export const AuthProvider = ({ children }) => {
         fetchCategorias,
         saveCategoria,
         deleteCategoria,
+        fetchClientes,
+        saveCliente,
+        deleteCliente,
+        updateClienteRoleAtivo,
       }}
     >
       {children}

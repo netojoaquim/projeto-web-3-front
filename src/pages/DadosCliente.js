@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Container, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useAlert } from '../context/AlertContext';
+
 
 const ClientData = () => {
     const { user, fetchClientData, updateClientData, loading: authLoading } = useAuth();
@@ -17,8 +19,8 @@ const ClientData = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState(false);
-    const [hasLoaded, setHasLoaded] = useState(false); // flag para evitar loop
-
+    const [hasLoaded, setHasLoaded] = useState(false);
+    const { showAlert } = useAlert();
     const formatDate = (isoString) => isoString ? isoString.split('T')[0] : '';
 
     useEffect(() => {
@@ -45,7 +47,6 @@ const ClientData = () => {
                      // ou qualquer rota desejada
                 }, 1500);
                 setError(false);
-                setMessage('');
             } else {
                 console.error('ClientData -> erro ao carregar dados:', result.message);
                 setError(true);
@@ -59,10 +60,47 @@ const ClientData = () => {
         loadData();
     }, [authLoading, user?.id, fetchClientData, hasLoaded]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+
+const handleChange = (e) => {
+    const { name, value } = e.target;
+    let newValue = value;
+    if (name === "numero_telefone") {
+      // Remove tudo que não for número
+      newValue = value.replace(/\D/g, "");
+
+      // Limita a 11 dígitos
+      newValue = newValue.slice(0, 11);
+
+      // Aplica a formatação
+      if (newValue.length <= 10) {
+        newValue = newValue.replace(
+          /^(\d{0,2})(\d{0,4})(\d{0,4})$/,
+          (_, d1, d2, d3) => {
+            let formatted = "";
+            if (d1) formatted += `(${d1}`;
+            if (d1.length === 2) formatted += ") ";
+            if (d2) formatted += d2;
+            if (d3) formatted += `-${d3}`;
+            return formatted;
+          }
+        );
+      } else {
+        newValue = newValue.replace(
+          /^(\d{0,2})(\d{0,5})(\d{0,4})$/,
+          (_, d1, d2, d3) => {
+            let formatted = "";
+            if (d1) formatted += `(${d1}`;
+            if (d1.length === 2) formatted += ") ";
+            if (d2) formatted += d2;
+            if (d3) formatted += `-${d3}`;
+            return formatted;
+          }
+        );
+      }
+    }
+
+    setFormData({ ...formData, [name]: newValue });
+  };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -80,11 +118,24 @@ const ClientData = () => {
 
         if (result.success) {
             setMessage(result.message);
-            await fetchClientData(user.id); 
+            await fetchClientData(user.id);
             navigate('/');
+            showAlert({
+          title: "Aviso!",
+          message: "Dados atualizados com sucesso.",
+          type: "warning",
+          duration: 5000,
+          bg: "#0d6efd",
+        });
         } else {
             setError(true);
-            setMessage(result.message);
+            showAlert({
+          title: "Aviso!",
+          message: "Erro ao atualizar dados: " + result.message,
+          type: "warning",
+          duration: 5000,
+          bg: "#0d6efd",
+        });
         }
         setIsSubmitting(false);
     };
@@ -98,21 +149,9 @@ const ClientData = () => {
         );
     }
 
-    if (!user) {
-        return (
-            <Container className="mt-5 text-center">
-                <Alert variant="danger">
-                    Usuário não encontrado ou email ausente.
-                </Alert>
-            </Container>
-        );
-    }
-
     return (
         <Container style={{ maxWidth: '600px' }} className="mt-5 mb-5 p-4 border rounded shadow-sm">
             <h2 className="mb-4 text-center text-primary">Meus Dados de Perfil</h2>
-
-            {message && <Alert variant={error ? 'danger' : 'success'}>{message}</Alert>}
 
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formNomeCompleto">
@@ -167,7 +206,7 @@ const ClientData = () => {
                     />
                 </Form.Group>
 
-                <Button variant="success" type="submit" className="w-100" disabled={isSubmitting}>
+                <Button variant="primary" type="submit" className="w-100" disabled={isSubmitting}>
                     {isSubmitting ? (
                         <Spinner animation="border" size="sm" className="me-2" />
                     ) : (

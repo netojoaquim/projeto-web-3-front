@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Row, Col, Alert, Spinner } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
+import { useAlert } from '../context/AlertContext';
 
 const AddressForm = ({ addressData, onSuccess, onCancel }) => {
     const { addAddress, updateAddress } = useAuth();
@@ -17,6 +18,7 @@ const AddressForm = ({ addressData, onSuccess, onCancel }) => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState(false);
+    const { showAlert } = useAlert();
 
     // Atualiza formData somente quando addressData muda
     useEffect(() => {
@@ -59,15 +61,24 @@ const AddressForm = ({ addressData, onSuccess, onCancel }) => {
         }
 
         if (result.success) {
-            setMessage(result.message);
-            // Aguarda um pequeno delay para mostrar mensagem antes de fechar
-            setTimeout(() => {
-                onSuccess();
-                onCancel();
-            }, 500);
+          setMessage(result.message);
+          // Aguarda um pequeno delay para mostrar mensagem antes de fechar
+          setTimeout(() => {
+            onSuccess();
+            onCancel();
+            showAlert({
+              title: "Aviso!",
+              message: "Endereço salvo com sucesso.",
+              type: "warning",
+              duration: 5000,
+              bg: "#0d6efd",
+            });
+          }, 500);
         } else {
-            setError(true);
-            setMessage(result.message || 'Erro ao salvar o endereço. Verifique os campos.');
+          setError(true);
+          setMessage(
+            result.message || "Erro ao salvar o endereço. Verifique os campos."
+          );
         }
 
         setLoading(false);
@@ -75,8 +86,6 @@ const AddressForm = ({ addressData, onSuccess, onCancel }) => {
 
     return (
         <Form onSubmit={handleSubmit}>
-            {message && <Alert variant={error ? 'danger' : 'success'}>{message}</Alert>}
-
             <Form.Group className="mb-3">
                 <Form.Label>Apelido (Ex: Casa, Trabalho)</Form.Label>
                 <Form.Control name="apelido" value={formData.apelido} onChange={handleChange} required disabled={loading} maxLength={100} />
@@ -85,7 +94,7 @@ const AddressForm = ({ addressData, onSuccess, onCancel }) => {
             <Row>
                 <Form.Group as={Col} md="6" className="mb-3">
                     <Form.Label>CEP</Form.Label>
-                    <Form.Control name="cep" value={formData.cep} onChange={handleChange} required disabled={loading} maxLength={9} placeholder="00000-000" />
+                    <Form.Control name="cep" value={formData.cep} onChange={handleChange} required disabled={loading} maxLength={8} placeholder="00000-000" />
                 </Form.Group>
                 <Form.Group as={Col} md="6" className="mb-3">
                     <Form.Label>Número</Form.Label>
@@ -125,7 +134,7 @@ const AddressForm = ({ addressData, onSuccess, onCancel }) => {
             </Row>
             <div className="d-flex justify-content-end gap-2">
                 <Button variant="secondary" onClick={onCancel} disabled={loading}>Cancelar</Button>
-                <Button variant="success" type="submit" disabled={loading}>
+                <Button variant="primary" type="submit" disabled={loading}>
                     {loading ? <Spinner animation="border" size="sm" className="me-2" /> : <i className="bi bi-save me-2"></i>}
                     {addressData ? 'Salvar Alterações' : 'Adicionar Endereço'}
                 </Button>

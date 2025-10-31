@@ -41,11 +41,11 @@ const ItemCard = ({ item }) => {
 
       if (currentQty + quantity > item.estoque) {
         showAlert({
-          title: 'Aviso!',
-          message: 'O produto selecionado não tem mais estoque disponível.',
-          type: 'warning',
+          title: "Aviso!",
+          message: "Quantidade solicitada excede o estoque disponível.",
+          type: "warning",
           duration: 5000,
-          bg: '#ffc107',
+          bg: "#0d6efd",
         });
         setIsLoading(false);
         return;
@@ -53,15 +53,24 @@ const ItemCard = ({ item }) => {
 
       // Adiciona ao carrinho via contexto
       const result = await addToCartWithStock(item, quantity);
-      setFeedback({
-        type: result.success ? 'success' : 'danger',
-        message: result.message,
-      });
+      showAlert({
+          title: "Aviso!",
+          message: "Produto adicionado ao carrinho com sucesso.",
+          type: "warning",
+          duration: 5000,
+          bg: "#0d6efd",
+        });
 
       if (result.success) setTimeout(() => handleClose(), 1000);
     } catch (err) {
       console.error(err);
-      setFeedback({ type: 'danger', message: 'Erro ao adicionar ao carrinho.' });
+      showAlert({
+          title: "Erro!",
+          message: "Não foi possível adicionar o produto ao carrinho.",
+          type: "warning",
+          duration: 5000,
+          bg: "#ff0000",
+        });
     } finally {
       setIsLoading(false);
     }
@@ -176,7 +185,7 @@ const ItemCard = ({ item }) => {
             <i className="bi bi-arrow-left me-2"></i> Voltar
           </Button>
           <Button
-            variant="success"
+            variant="primary"
             onClick={handleAddToCart}
             disabled={isLoading || (currentQtyInCart + quantity > item.estoque)}
           >

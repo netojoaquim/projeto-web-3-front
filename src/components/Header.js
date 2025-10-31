@@ -4,20 +4,29 @@ import { LinkContainer } from "react-router-bootstrap";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CarrinhoContext";
 import { useLayout } from "../context/LayoutContext";
-
+import { useAlert } from "../context/AlertContext";
 const Header = () => {
   const { isAuthenticated, logout, user } = useAuth();
   const { cartState } = useCart();
   const { handleShowCart } = useLayout();
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const { showAlert } = useAlert();
 
   const totalItems = cartState.items.reduce(
     (acc, item) => acc + item.quantity,
     0
   );
 
-  const handleLogout = () => logout();
-
+  const handleLogout = () => {
+    logout();
+    showAlert({
+        title: "Aviso!",
+        message: "Você saiu da sua conta.",
+        type: "warning",
+        duration: 5000,
+        bg: "#0d6efd",
+      });
+  };
   const handleCloseProfileModal = () => setShowProfileModal(false);
   const handleShowProfileModal = () => setShowProfileModal(true);
 
@@ -61,7 +70,7 @@ const Header = () => {
                       </Button>
                     </LinkContainer>
 
-                    <LinkContainer to="/usuarios">
+                    <LinkContainer to="/cliente">
                       <Button
                         variant="primary"
                         className="d-flex align-items-center justify-content-center text-truncate w-100"

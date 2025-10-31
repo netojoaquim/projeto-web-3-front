@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Container, Row, Col, Form, Button, Alert, InputGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css'; // Certifique-se de importar
+import { useAlert } from '../context/AlertContext';
 
 
 const Login = () => {
@@ -14,6 +15,7 @@ const Login = () => {
   // Estados para feedback do usuário
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { showAlert } = useAlert();
 
   // Hooks do React Router e do Contexto
   const { login } = useAuth();
@@ -34,15 +36,34 @@ const Login = () => {
       if (success.success) {
         setError(null);
         // Login bem-sucedido
-        navigate('/'); // Redireciona para a home
+        navigate("/");
+        showAlert({
+          title: "Aviso!",
+          message: "Login realizado com sucesso.",
+          type: "warning",
+          duration: 5000,
+          bg: "#0d6efd",
+        });
+         // Redireciona para a home
       } else {
-        // Falha no login (ex: 401 Unauthorized do backend)
-        setError('Email ou senha inválidos. Tente novamente.',success.message);
+        showAlert({
+          title: "Aviso!",
+          message: "Usuário ou senha incorretos.",
+          type: "warning",
+          duration: 5000,
+          bg: "#0d6efd",
+        });
       }
     } catch (e) {
       // Para erros que não são 4xx (ex: erro de rede, servidor indisponível)
-      console.error("Erro de conexão durante o login:", e);
-      setError('Ocorreu um erro ao conectar-se ao servidor. Tente novamente mais tarde.');
+      showAlert({
+        title: "Aviso!",
+        message:
+          "Ocorreu um erro ao conectar-se ao servidor. Tente novamente mais tarde.",
+        type: "warning",
+        duration: 5000,
+        bg: "#0d6efd",
+      });
     } finally {
       // Garante que o loading seja desativado, independente do resultado
       setIsLoading(false);

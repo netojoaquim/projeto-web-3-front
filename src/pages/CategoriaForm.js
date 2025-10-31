@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, Container, ListGroup, Modal, Spinner } from 'react-bootstrap';
+import { Alert, Button, Container, ListGroup, Modal, Spinner,InputGroup, Form } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 import CategoriaFormComp from '../components/CategoriaFormComp';
+import { useAlert } from '../context/AlertContext';
 
 const Categoria = () => {
-  const { fetchCategorias, deleteCategoria } = useAuth(); // precisa existir no seu contexto
+  const { fetchCategorias, deleteCategoria } = useAuth();
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
@@ -15,7 +16,11 @@ const Categoria = () => {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [categoriaToDelete, setCategoriaToDelete] = useState(null);
-  // 🔹 Carregar categorias
+  const [search, setSearch] = useState('');
+  const [filteredCategoria, setFilteredCategoria] = useState([]);
+  const { showAlert } = useAlert();
+
+
   const loadCategorias = useCallback(async () => {
     setLoading(true);
     setMessage('');
@@ -25,12 +30,15 @@ const Categoria = () => {
       const result = await fetchCategorias();
       if (result.success && result.data) {
         setCategorias(result.data);
+        setFilteredCategoria(result.data);
       } else {
         setCategorias([]);
+        setFilteredCategoria([]);
         setError(true);
         setMessage(result.message || 'Erro ao carregar categorias.');
       }
     } catch (err) {
+      setCategorias([]);
       setCategorias([]);
       setError(true);
       setMessage('Erro ao carregar categorias.');
@@ -40,10 +48,17 @@ const Categoria = () => {
   }, [fetchCategorias]);
 
   useEffect(() => {
+    const lowerSearch = search.toLowerCase();
+    const filtered = categorias.filter((c) =>
+      c.descricao.toLowerCase().includes(lowerSearch)
+    );
+    setFilteredCategoria(filtered);
+  }, [search,categorias]);
+
+  useEffect(() => {
     loadCategorias();
   }, [loadCategorias]);
 
-  // 🔹 Modal de adicionar/editar
   const handleAddClick = () => {
     setEditingCategoria(null);
     setShowModal(true);
@@ -77,10 +92,22 @@ const Categoria = () => {
     const result = await deleteCategoria(categoriaToDelete.id);
     if (result.success) {
       await loadCategorias();
-      setMessage('Categoria excluída com sucesso!');
+      showAlert({
+        title: "Aviso!",
+        message: "Categoria excluída com sucesso.",
+        type: "warning",
+        duration: 5000,
+        bg: "#0d6efd",
+      });
     } else {
       setError(true);
-      setMessage(result.message || 'Erro ao excluir categoria.');
+      showAlert({
+        title: "Aviso!",
+        message: "Erro ao excluir categoria.",
+        type: "warning",
+        duration: 5000,
+        bg: "#ff0000",
+      });
       setLoading(false);
     }
     setCategoriaToDelete(null);
@@ -96,13 +123,24 @@ const Categoria = () => {
     );
 
   return (
-    <Container style={{ maxWidth: '800px' }} className="mt-5 mb-5 p-4 border rounded shadow-sm">
+    <Container style={{ maxWidth: '900px' }} className="mt-5 mb-5 p-4 border rounded shadow-sm">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="text-primary">Categorias</h2>
-        <Button variant="primary" onClick={handleAddClick}>
+        <Button variant="primary" className='w-50' onClick={handleAddClick}>
           <i className="bi bi-plus-circle me-2"></i> Incluir Categoria
         </Button>
       </div>
+      <InputGroup className='w-md-50 mb-4 ms-auto'>
+          <Form.Control
+            type="text"
+            placeholder="Pesquisar por nome..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button variant="primary" onClick={() => setSearch('')}>
+            <i className="bi bi-x-circle"></i>
+          </Button>
+        </InputGroup>
 
       {message && (
         <Alert
@@ -120,7 +158,7 @@ const Categoria = () => {
         </Alert>
       ) : (
         <ListGroup variant="flush">
-          {categorias.map((cat) => (
+          {filteredCategoria.map((cat) => (
             <ListGroup.Item key={cat.id} className="d-flex justify-content-between align-items-center">
               <div>
                 {cat.descricao && (
@@ -131,14 +169,14 @@ const Categoria = () => {
               </div>
               <div className="d-flex gap-2">
                 <Button
-                  variant="outline-secondary"
+                  variant="primary"
                   size="sm"
                   onClick={() => handleEditClick(cat)}
                 >
                   <i className="bi bi-pencil-square"></i> Alterar
                 </Button>
                 <Button
-                  variant="outline-danger"
+                  variant="danger"
                   size="sm"
                   onClick={() => handleDeleteConfirmation(cat)}
                 >

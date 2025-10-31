@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
+import { useAlert } from '../context/AlertContext';
 
 const CategoriaFormComp = ({ categoriaData, onSuccess, onCancel }) => {
-  const { saveCategoria } = useAuth(); // função que chama o backend
+  const { saveCategoria } = useAuth();
   const [form, setForm] = useState({
     descricao: categoriaData?.descricao || '',
   });
   const [loading, setLoading] = useState(false);
+  const { showAlert } = useAlert();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -20,6 +22,13 @@ const CategoriaFormComp = ({ categoriaData, onSuccess, onCancel }) => {
     if (result.success) {
       onSuccess();
       onCancel();
+      showAlert({
+        title: "Aviso!",
+        message: "Categoria salva com sucesso.",
+        type: "warning",
+        duration: 5000,
+        bg: "#0d6efd",
+      });
     } else {
       alert(result.message || 'Erro ao salvar categoria');
     }
@@ -31,7 +40,7 @@ const CategoriaFormComp = ({ categoriaData, onSuccess, onCancel }) => {
         <Form.Label>Descrição</Form.Label>
         <Form.Control
           as="textarea"
-          rows={3}
+          rows={1}
           name="descricao"
           value={form.descricao}
           onChange={handleChange}

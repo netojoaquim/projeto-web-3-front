@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Spinner, Alert, Image, Row, Col } from 'react-bootstrap';
 import api from '../api/api';
+import { useAlert } from '../context/AlertContext';
 
 const ProdutoFormComp = ({ produtoData, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ const ProdutoFormComp = ({ produtoData, onCancel }) => {
 
   const [categories, setCategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const {showAlert}= useAlert();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -43,19 +45,20 @@ const ProdutoFormComp = ({ produtoData, onCancel }) => {
   };
 
   const handleChange = (e) => {
-    let { name, value } = e.target;
+    let { name, value, checked, type } = e.target;
+    let newValue = value;
 
     if (name === 'preco') {
       value = value.replace(/\D/g, '');
       value = (value / 100).toFixed(2).replace('.', ',');
     } else if (name === 'estoque') {
       value = parseInt(value, 10);
-      if (isNaN(value) || value < 0) value = 0;
-    } else if (name === 'ativo') {
-      value = value === 'true';
+      if (isNaN(newValue) || newValue < 0) newValue = 0;
+    } else if (type === 'checkbox') {
+      newValue = checked;
     }
 
-    setFormData({ ...formData, [name]: value });
+    setFormData({ ...formData, [name]: newValue });
   };
 
   const handleFileChange = (e) => {
@@ -95,17 +98,24 @@ const ProdutoFormComp = ({ produtoData, onCancel }) => {
         descricao: formData.descricao,
         preco: parsePrice(formData.preco),
         estoque: parseInt(formData.estoque, 10),
-        categoria: { id: parseInt(formData.categoriaId, 10) }, // ← objeto, não só o id
+        categoria: { id: parseInt(formData.categoriaId, 10) }, 
         ativo: formData.ativo,
         imagem: finalFilename,
       };
 
       if (produtoData?.id) {
         await api.patch(`/produto/${produtoData.id}`, payload);
+
       } else {
         await api.post('/produto', payload);
       }
-
+      showAlert({
+          title: "Aviso!",
+          message: "Produto atualizado com sucesso.",
+          type: "warning",
+          duration: 5000,
+          bg: "#0d6efd",
+        });
       // Fecha o modal e recarrega a página somente após salvar
       if (onCancel) {
         onCancel();
@@ -113,6 +123,13 @@ const ProdutoFormComp = ({ produtoData, onCancel }) => {
       }
     } catch (err) {
       console.error('Erro ao salvar produto:', err);
+      showAlert({
+          title: "Aviso!",
+          message: "Erro ao atualizar o produto.",
+          type: "warning",
+          duration: 5000,
+          bg: "#ff0000",
+        });
       setError(err.response?.data?.message || 'Erro desconhecido');
     } finally {
       setLoading(false);
@@ -121,7 +138,6 @@ const ProdutoFormComp = ({ produtoData, onCancel }) => {
 
   return (
     <Form onSubmit={handleSubmit}>
-      {error && <Alert variant="danger">{error}</Alert>}
 
       <Form.Group className="mb-3">
         <Form.Label>Nome</Form.Label>
@@ -154,11 +170,13 @@ const ProdutoFormComp = ({ produtoData, onCancel }) => {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>Produto Ativo?</Form.Label>
-        <Form.Select name="ativo" value={formData.ativo.toString()} onChange={handleChange} required>
-          <option value="true">Sim</option>
-          <option value="false">Não</option>
-        </Form.Select>
+        <Form.Check
+          type="checkbox"
+          label="Ativo"
+          name="ativo"
+          checked={formData.ativo}
+          onChange={handleChange}
+        />
       </Form.Group>
 
       <Form.Group className="mb-3">
