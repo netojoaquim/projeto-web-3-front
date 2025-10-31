@@ -58,7 +58,7 @@ const Header = () => {
             {/*autenticado*/}
             {isAuthenticated ? (
               <>
-                {/* 🟩 ADMIN */}
+                {/*ADMIN */}
                 {user?.role === "admin" && (
                   <>
                     <LinkContainer to="/produto">
@@ -85,6 +85,14 @@ const Header = () => {
                         className="d-flex align-items-center justify-content-center text-truncate w-100"
                       >
                         <i className="bi bi-people-fill me-1"></i> Categorias
+                      </Button>
+                    </LinkContainer>
+                    <LinkContainer to="cliente/pedidos">
+                      <Button
+                        variant="primary"
+                        className="d-flex align-items-center justify-content-center text-truncate w-100"
+                      >
+                        <i className="bi bi-people-fill me-1"></i> Pedidos
                       </Button>
                     </LinkContainer>
                   </>
