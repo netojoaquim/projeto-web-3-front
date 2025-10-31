@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
-import { Offcanvas, Button, ListGroup, Form } from 'react-bootstrap';
-import { useLayout } from '../context/LayoutContext';
-import { useCart } from '../context/CarrinhoContext';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import DefaultImage from '../assets/semImagem.jpg';
+import React, { useEffect } from "react";
+import { Offcanvas, Button, ListGroup, Form } from "react-bootstrap";
+import { useLayout } from "../context/LayoutContext";
+import { useCart } from "../context/CarrinhoContext";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import DefaultImage from "../assets/semImagem.jpg";
 
 const CartOffcanvas = () => {
   const { showCart, handleCloseCart } = useLayout();
-  const { cartState, dispatch, removeFromCart, updateItem } = useCart();
+  const { cartState, dispatch, removeFromCart, updateItem, fetchCart } =
+    useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -17,30 +18,12 @@ const CartOffcanvas = () => {
     const userIdToFetch = user?.id || user?.clienteId;
     if (!userIdToFetch || !showCart) return;
 
-    const fetchCart = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/carrinho/${userIdToFetch}`);
-        const data = await res.json();
-
-        dispatch({
-          type: 'SET_CART',
-          payload: {
-            cartId: data.id,
-            items: data.itens || [],
-            total: data.total || 0,
-          },
-        });
-      } catch (err) {
-        //console.error('Erro ao carregar carrinho:', err);
-      }
-    };
-
     fetchCart();
-  }, [user, dispatch, showCart, BASE_URL]);
+  }, [user, dispatch, fetchCart, showCart]);
 
   const handleCheckout = () => {
     handleCloseCart();
-    navigate('/checkout');
+    navigate("/checkout");
   };
 
   const handleQuantityChange = (item, value) => {
@@ -49,7 +32,7 @@ const CartOffcanvas = () => {
     if (newQty > (item.produto?.estoque || 0)) newQty = item.produto.estoque;
 
     dispatch({
-      type: 'UPDATE_ITEM',
+      type: "UPDATE_ITEM",
       payload: { ...item, quantidade: newQty },
     });
 
@@ -57,7 +40,7 @@ const CartOffcanvas = () => {
   };
 
   const total = cartState.items.reduce(
-    (sum, item) => sum + ((item?.produto?.preco ?? 0) * (item.quantidade || 0)),
+    (sum, item) => sum + (item?.produto?.preco ?? 0) * (item.quantidade || 0),
     0
   );
 
@@ -87,45 +70,54 @@ const CartOffcanvas = () => {
                       <div className="flex-shrink-0 me-3">
                         <img
                           src={imageUrl}
-                          alt={produto.nome || 'Produto'}
+                          alt={produto.nome || "Produto"}
                           style={{
-                            width: '80px',
-                            height: '80px',
-                            objectFit: 'cover',
-                            borderRadius: '4px',
+                            width: "80px",
+                            height: "80px",
+                            objectFit: "cover",
+                            borderRadius: "4px",
                           }}
                         />
                       </div>
                       <div className="flex-grow-1 d-inline-block text-truncate">
                         <h6 className="mb-0">
-                          <strong>{produto.nome || 'Produto'}</strong>
+                          <strong>{produto.nome || "Produto"}</strong>
                         </h6>
                         <p
                           className="mb-2 small text-muted"
                           style={{
-                            display: '-webkit-box',
-                            WebkitBoxOrient: 'vertical',
+                            display: "-webkit-box",
+                            WebkitBoxOrient: "vertical",
                             WebkitLineClamp: 3,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'normal',
-                            width: '100%',
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "normal",
+                            width: "100%",
                           }}
                         >
-                          {produto.descricao || 'Sem descrição.'}
+                          {produto.descricao || "Sem descrição."}
                         </p>
-                        <p className='mb-0'>
-                          Estoque disponível: {produto.estoque ?? 'Indisponível'}
+                        <p className="mb-0">
+                          Estoque disponível:{" "}
+                          {produto.estoque ?? "Indisponível"}
                         </p>
                       </div>
                     </div>
 
                     <div className="d-flex justify-content-between align-items-center mt-2 flex-row">
-                      <div className="d-flex align-items-center" style={{ width: '130px' }}>
+                      <div
+                        className="d-flex align-items-center"
+                        style={{ width: "130px" }}
+                      >
                         <Button
                           variant="outline-secondary"
                           size="sm"
-                          onClick={() => handleQuantityChange(item, (item.quantidade || 1) - 1)}
+                          onClick={() =>
+                            handleQuantityChange(
+                              item,
+                              (item.quantidade || 1) - 1
+                            )
+                          }
                           disabled={(item.quantidade || 1) <= 1}
                         >
                           -
@@ -138,32 +130,48 @@ const CartOffcanvas = () => {
                           onChange={(e) => {
                             const val = e.target.value;
                             dispatch({
-                              type: 'UPDATE_ITEM',
-                              payload: { ...item, quantidade: val === '' ? '' : Number(val) },
+                              type: "UPDATE_ITEM",
+                              payload: {
+                                ...item,
+                                quantidade: val === "" ? "" : Number(val),
+                              },
                             });
                           }}
                           onBlur={() => {
                             let newQty = Number(item.quantidade);
                             if (!newQty || newQty < 1) newQty = 1;
-                            if (newQty > (produto.estoque || 0)) newQty = produto.estoque;
+                            if (newQty > (produto.estoque || 0))
+                              newQty = produto.estoque;
                             handleQuantityChange(item, newQty);
                           }}
                           className="align-items-center w-100 mx-2 text-center"
-                          style={{ height: '31px', width: '3em' }}
+                          style={{ height: "31px", width: "3em" }}
                         />
 
                         <Button
                           variant="outline-secondary"
                           size="sm"
-                          onClick={() => handleQuantityChange(item, (item.quantidade || 1) + 1)}
-                          disabled={(item.quantidade || 1) >= (produto.estoque || 1)}
+                          onClick={() =>
+                            handleQuantityChange(
+                              item,
+                              (item.quantidade || 1) + 1
+                            )
+                          }
+                          disabled={
+                            (item.quantidade || 1) >= (produto.estoque || 1)
+                          }
                         >
                           +
                         </Button>
                       </div>
 
                       <div className="text-center mx-1">
-                        Subtotal: R$ <b>{((produto.preco || 0) * (item.quantidade || 0)).toFixed(2)}</b>
+                        Subtotal: R${" "}
+                        <b>
+                          {(
+                            (produto.preco || 0) * (item.quantidade || 0)
+                          ).toFixed(2)}
+                        </b>
                       </div>
 
                       <Button
@@ -181,9 +189,7 @@ const CartOffcanvas = () => {
 
             <h5 className="mt-1 text-end">
               <b>Total do Carrinho: </b>
-              <span className="text-3">
-                R$ {total.toFixed(2)}
-              </span>
+              <span className="text-3">R$ {total.toFixed(2)}</span>
             </h5>
 
             <div className="d-flex justify-content-center">

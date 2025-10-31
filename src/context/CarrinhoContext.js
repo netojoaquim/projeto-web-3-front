@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect,useState } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
+import api from '../api/api';
+import { useCallback } from 'react';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -52,28 +54,38 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const { user } = useAuth();
   const [cartState, dispatch] = useReducer(cartReducer, initialState);
+  const [cartUpdateSignal, setCartUpdateSignal] = useState(0);
+
+  const triggerCartUpdate = useCallback(() => {
+    setCartUpdateSignal(prev => prev + 1);
+  }, []);
 
   // 🔹 Carrega carrinho do backend
-  const fetchCart = async () => {
-    if (!user?.id) return;
+  const fetchCart = useCallback(async () => {
+    const userIdToFetch = user?.id || user?.clienteId;
+    if (!userIdToFetch) {
+      dispatch({ type: 'SET_CART', payload: { cartId: null, items: [], total: 0 } });
+      return;
+    }
+
     try {
-      const res = await axios.get(`${BASE_URL}/carrinho/${user.id}`);
+      const res = await api.get(`/carrinho/${userIdToFetch}`);
+      const data = res.data;
+
       dispatch({
         type: 'SET_CART',
         payload: {
-          cartId: res.data.id,
-          items: (res.data.items || []).map(item => ({
-            ...item,
-            quantidade: Number(item.quantidade),
-            valor: item.valor,
-          })),
-          total: Number(res.data.total) || 0,
+          cartId: data.id,
+          items: data.itens || [],
+          total: data.total || 0,
         },
       });
+      return data;
     } catch (err) {
       console.error('Erro ao carregar carrinho:', err);
+      dispatch({ type: 'SET_CART', payload: { cartId: null, items: [], total: 0 } });
     }
-  };
+  }, [user, dispatch]);
 
   // 🔹 Adiciona item ao carrinho com verificação de estoque
   const addToCartWithStock = async (produto, quantidade) => {
@@ -106,6 +118,7 @@ export const CartProvider = ({ children }) => {
         produtoId: produto.id,
         quantidade,
       });
+      triggerCartUpdate();
 
       // garante que produto sempre seja preservado
       if (existingItem) {
@@ -144,6 +157,7 @@ export const CartProvider = ({ children }) => {
         quantidade: Number(quantidade),
       });
       dispatch({ type: 'UPDATE_ITEM', payload: res.data });
+      triggerCartUpdate();
     } catch (err) {
       console.error('Erro ao atualizar item:', err);
     }
@@ -155,6 +169,7 @@ export const CartProvider = ({ children }) => {
     try {
       await axios.delete(`${BASE_URL}/carrinho/${user.id}/item/${itemId}`);
       dispatch({ type: 'REMOVE_ITEM', payload: itemId });
+      triggerCartUpdate();
     } catch (err) {
       console.error('Erro ao remover item:', err);
     }
@@ -173,6 +188,7 @@ export const CartProvider = ({ children }) => {
         updateItem,
         removeFromCart,
         dispatch,
+        cartUpdateSignal,
       }}
     >
       {children}

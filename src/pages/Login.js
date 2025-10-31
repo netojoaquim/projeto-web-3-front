@@ -47,11 +47,11 @@ const Login = () => {
          // Redireciona para a home
       } else {
         showAlert({
-          title: "Aviso!",
+          title: "Erro!",
           message: "Usuário ou senha incorretos.",
           type: "warning",
           duration: 5000,
-          bg: "#0d6efd",
+          bg: "#ff0000",
         });
       }
     } catch (e) {

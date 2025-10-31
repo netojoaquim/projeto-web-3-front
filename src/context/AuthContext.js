@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     if (token && userDataString) {
       try {
         const userData = JSON.parse(userDataString);
-        //console.log('AuthContext -> userData parseado:', userData);
+        console.log('AuthContext -> userData parseado:', userData);
         setIsAuthenticated(true);
         setUser(userData);
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;

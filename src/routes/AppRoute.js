@@ -8,6 +8,7 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import ProdutoForm from "../pages/ProdutoForm";
 import ClienteForm from "../pages/ClienteForm";
+import CheckoutPage from "../pages/CheckoutPage";
 //import CheckoutPage from '../pages/CheckoutPage';
 import Register from "../pages/Register";
 import PrivateRoute from "./PrivateRoutes";
@@ -40,10 +41,10 @@ const AppRoute = () => {
 
       {/* Envolve as rotas protegidas (PrivateRoutes) dentro do MainLayout */}
       <Route element={<PrivateRoute />}>
-        {/* <Route 
-                path="/checkout" 
-                element={<MainLayout>{<CheckoutPage />}</MainLayout>} 
-            /> */}
+        <Route
+          path="/checkout"
+          element={<MainLayout>{<CheckoutPage />}</MainLayout>}
+        />
         <Route
           path="/cliente/dados"
           element={<MainLayout>{<DadosCliente />}</MainLayout>}
@@ -65,11 +66,11 @@ const AppRoute = () => {
         />
         <Route
           path="produto/categoria"
-          element={<MainLayout>{<Categoria/>}</MainLayout>}
+          element={<MainLayout>{<Categoria />}</MainLayout>}
         />
         <Route
           path="cliente"
-          element={<MainLayout>{<ClienteForm/>}</MainLayout>}
+          element={<MainLayout>{<ClienteForm />}</MainLayout>}
         />
       </Route>
 
