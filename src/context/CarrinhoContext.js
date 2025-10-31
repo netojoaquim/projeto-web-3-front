@@ -28,7 +28,6 @@ const cartReducer = (state, action) => {
             ? {
                 ...item,
                 ...action.payload,
-                // preserva produto caso o backend não o retorne
                 produto: action.payload.produto || item.produto,
               }
             : item
@@ -175,6 +174,20 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  const limparCarrinho = async () => {
+  if (!user?.id) return;
+
+  try {
+    await axios.delete(`${BASE_URL}/carrinho/${user.id}/limpar`);
+    localStorage.removeItem("carrinho");
+    dispatch({ type: 'CLEAR_CART' });
+    triggerCartUpdate();
+  } catch (err) {
+    console.error('Erro ao limpar carrinho:', err);
+  }
+};
+
+
   useEffect(() => {
     if (user?.id) fetchCart();
   }, [user?.id]);
@@ -189,6 +202,7 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         dispatch,
         cartUpdateSignal,
+        limparCarrinho,
       }}
     >
       {children}

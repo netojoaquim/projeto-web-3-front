@@ -14,6 +14,7 @@ import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { useCart } from "../context/CarrinhoContext";
+import { useAlert } from "../context/AlertContext";
 
 const CheckoutPage = () => {
   const { user } = useAuth();
@@ -22,9 +23,11 @@ const CheckoutPage = () => {
   const [total, setTotal] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("cartao");
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  const { cartUpdateSignal, fetchCart } = useCart();
+  const {cartUpdateSignal, fetchCart } = useCart();
   const [cartItems, setCartItems] = useState([]);
   const enderecoPadrao = user?.enderecos?.find((addr) => addr.padrao === true);
+  const { showAlert } = useAlert();
+  const {limparCarrinho} = useCart();
 
   useEffect(() => {
     const userId = user?.id || user?.clienteId;
@@ -38,13 +41,11 @@ const CheckoutPage = () => {
       setLoading(true);
       setError(null);
 
-      // Chamada à função centralizada do Context
       const data = await fetchCart();
 
       if (data) {
-        // Agora setCartItems está definido e pode ser usado
         const items = data.itens || [];
-        setCartItems(items); 
+        setCartItems(items);
         setTotal(parseFloat(data.total) || 0);
 
         if (items.length === 0) {
@@ -57,52 +58,59 @@ const CheckoutPage = () => {
     };
 
     loadCartData();
-    
-    // O useEffect agora reage à mudança no carrinho e executa o fetch
+
   }, [user, fetchCart, cartUpdateSignal]);
 
   const handleFinalizarCompra = async () => {
     setLoading(true);
     const userId = user?.id || user?.clienteId;
 
+    const itensFormatados = cartItems.map((item) => ({
+      produto: { id: item.produto.id },
+      quantidade: item.quantidade,
+      valor: parseFloat(item.produto.preco),
+    }));
+
+    const totalCalculado = cartItems
+      .map((item) => parseFloat(item.produto.preco) * item.quantidade)
+      .reduce((acc, val) => acc + val, 0);
+
     const pedidoData = {
       userId: userId,
-      itens: cartItems,
-      total: total,
-      // Usando a constante local 'enderecoPadrao'
-      enderecoEntrega: enderecoPadrao,
-      metodoPagamento: paymentMethod,
+      itens: itensFormatados,
+      total: totalCalculado,
+      enderecoEntrega: { id: enderecoPadrao.id },
+      metodoPagamento: paymentMethod.toUpperCase(),
     };
 
-    // Validação que agora usa a constante local
-    if (!enderecoPadrao) {
-      setError("Não é possível finalizar a compra sem um endereço padrão.");
-      setLoading(false);
-      return;
-    }
-
     try {
-      // Cria o pedido (simulação)
-      await api.post("/pedidos", pedidoData);
-
-      // Limpa o carrinho
-      await api.delete(`/carrinho/${userId}/limpar`);
-
-      alert("Compra finalizada com sucesso!");
-      setCartItems([]);
+      await api.post("/pedido", pedidoData);
+      await limparCarrinho();
+      fetchCart();
       setTotal(0);
+      //navigate("/pedido/sucesso");
+
+      showAlert({
+        title: "Aviso!",
+        message: "Compra finalizada com sucesso!",
+        type: "warning",
+        duration: 5000,
+        bg: "#0d6efd",
+      });
       setShouldRedirect(true);
     } catch (err) {
-      console.error("Erro ao finalizar compra:", err);
-      setError("Erro ao finalizar compra. Tente novamente.");
+      console.error("Erro ao finalizar compra:", err.response?.data || err);
+      showAlert({
+        title: "Erro!",
+        message: "Erro ao finalizar compra. Tente novamente.",
+        type: "warning",
+        duration: 5000,
+        bg: "#ff0000",
+      });
     } finally {
       setLoading(false);
     }
   };
-
-  // ----------------------------------------------------------------
-  // RENDERIZAÇÃO
-  // ----------------------------------------------------------------
 
   if (loading && !cartItems.length) {
     return (
@@ -120,7 +128,6 @@ const CheckoutPage = () => {
     );
 
   if (!cartItems.length && shouldRedirect) {
-    // CORREÇÃO: Retorna o componente <Navigate /> para redirecionar
     return <Navigate to="/" replace />;
   }
 
@@ -134,7 +141,7 @@ const CheckoutPage = () => {
     );
   }
   return (
-    <Container  className="mb-4">
+    <Container className="mb-4">
       <h2 className="mb-4 ">
         <i className="bi bi-cart-fill text-primary"></i>
         <strong className="p-2 text-primary">Finalizar Compra</strong>
@@ -161,23 +168,25 @@ const CheckoutPage = () => {
             </ListGroup>
           </Card>
 
-          {/* Card de Endereço de Entrega */}
+          {/* entrega */}
           <Card className="mb-3">
             <Card.Header as="h5">
               <i className="bi bi-geo-alt-fill mx-auto text-primary"></i>
               <strong className="p-2 text-primary">Endereço de Entrega</strong>
             </Card.Header>
             <Card.Body>
-              {/* Agora usa a constante 'enderecoPadrao' encontrada no início do componente */}
               {enderecoPadrao ? (
                 <ListGroup>
                   <ListGroup.Item>
-                    <strong className="text-primary">{enderecoPadrao.apelido}</strong>
+                    <strong className="text-primary">
+                      {enderecoPadrao.apelido}
+                    </strong>
                   </ListGroup.Item>
                   <ListGroup.Item>
                     <strong className="text-primary">Longradouro: </strong>
-                    {enderecoPadrao.rua},{enderecoPadrao.numero}{" "}-{" "}
-                    {enderecoPadrao.bairro} - {enderecoPadrao.cidade} / {enderecoPadrao.estado}
+                    {enderecoPadrao.rua},{enderecoPadrao.numero} -{" "}
+                    {enderecoPadrao.bairro} - {enderecoPadrao.cidade} /{" "}
+                    {enderecoPadrao.estado}
                   </ListGroup.Item>
                   <ListGroup.Item>
                     <strong className="text-primary">CEP:</strong>{" "}
@@ -193,7 +202,7 @@ const CheckoutPage = () => {
             </Card.Body>
           </Card>
 
-          {/* Card de Forma de Pagamento */}
+          {/* pagamento */}
           <Card className="mb-3">
             <Card.Header as="h5">
               <i className="bi bi-credit-card-2-back text-primary"></i>
@@ -206,12 +215,13 @@ const CheckoutPage = () => {
                   id="pagamento-cartao"
                   label={
                     <span>
-                      <i className="bi bi-credit-card-2-back text-primary"></i> Cartão de Crédito
+                      <i className="bi bi-credit-card-2-back text-primary"></i>{" "}
+                      Cartão de Crédito
                     </span>
                   }
                   name="paymentMethod"
-                  value="cartao"
-                  checked={paymentMethod === "cartao"}
+                  value="Cartão"
+                  checked={paymentMethod === "Cartão"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="mb-2"
                 />
@@ -224,8 +234,8 @@ const CheckoutPage = () => {
                     </span>
                   }
                   name="paymentMethod"
-                  value="pix"
-                  checked={paymentMethod === "pix"}
+                  value="Pix"
+                  checked={paymentMethod === "Pix"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="mb-2"
                 />
@@ -234,12 +244,13 @@ const CheckoutPage = () => {
                   id="pagamento-boleto"
                   label={
                     <span>
-                      <i className="bi bi-bank text-primary"></i> Boleto Bancário
+                      <i className="bi bi-bank text-primary"></i> Boleto
+                      Bancário
                     </span>
                   }
                   name="paymentMethod"
-                  value="boleto"
-                  checked={paymentMethod === "boleto"}
+                  value="Boleto"
+                  checked={paymentMethod === "Boleto"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
               </Form>
@@ -247,11 +258,11 @@ const CheckoutPage = () => {
           </Card>
         </Col>
 
-        {/* COLUNA DA DIREITA: RESUMO DO PEDIDO */}
+        {/* resumo */}
         <Col md={5}>
           <Card className="sticky-top" style={{ top: "20px" }}>
             <Card.Header as="h5">
-                <strong className="text-primary">Resumo do Pedido</strong>
+              <strong className="text-primary">Resumo do Pedido</strong>
             </Card.Header>
             <ListGroup variant="flush">
               {cartItems.map((item) => (
@@ -262,7 +273,8 @@ const CheckoutPage = () => {
                   <div className="ms-2 me-auto">
                     <div className="fw-bold">{item.produto.nome}</div>
                     <p className="text-muted">
-                      {item.quantidade}x{" "} R$ {parseFloat(item.produto.preco).toFixed(2)}
+                      {item.quantidade}x R${" "}
+                      {parseFloat(item.produto.preco).toFixed(2)}
                     </p>
                   </div>
                   <span className="bg-primary text-white p-1 rounded">
@@ -277,7 +289,13 @@ const CheckoutPage = () => {
               <ListGroup.Item className="d-flex justify-content-between align-items-center bg-light">
                 <h5 className="mb-0">Total</h5>
                 <h5 className="mb-0 fw-bold text-primary">
-                  R$ {total.toFixed(2)}
+                  R${" "}
+                  {cartItems
+                    .map(
+                      (item) => parseFloat(item.produto.preco) * item.quantidade
+                    )
+                    .reduce((acc, val) => acc + val, 0)
+                    .toFixed(2)}
                 </h5>
               </ListGroup.Item>
             </ListGroup>
@@ -288,7 +306,6 @@ const CheckoutPage = () => {
                 size="md"
                 className="w-100"
                 onClick={handleFinalizarCompra}
-                // Desabilita se não houver 'enderecoPadrao' encontrado
                 disabled={loading || !enderecoPadrao}
               >
                 {loading ? (
@@ -300,11 +317,11 @@ const CheckoutPage = () => {
                     aria-hidden="true"
                   />
                 ) : (
-                  <i class="bi bi-credit-card-2-back"></i>
+                  <i className="bi bi-credit-card-2-back"></i>
                 )}
-                {loading ? " Finalizando..." : "Finalizar Compra"}
+                {loading ? " Finalizando..." : " Finalizar Compra"}
               </Button>
-              {/* Mostra aviso se não houver 'enderecoPadrao' */}
+              {/*  aviso sem enderecoPadrao */}
               {!enderecoPadrao && (
                 <small className="text-danger d-block mt-2">
                   É necessário um endereço padrão para finalizar a compra.

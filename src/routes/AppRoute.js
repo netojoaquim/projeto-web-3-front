@@ -9,7 +9,7 @@ import Login from "../pages/Login";
 import ProdutoForm from "../pages/ProdutoForm";
 import ClienteForm from "../pages/ClienteForm";
 import CheckoutPage from "../pages/CheckoutPage";
-//import CheckoutPage from '../pages/CheckoutPage';
+import PedidosPage from "../pages/PedidoPage";
 import Register from "../pages/Register";
 import PrivateRoute from "./PrivateRoutes";
 const AppRoute = () => {
@@ -54,9 +54,14 @@ const AppRoute = () => {
           element={<MainLayout>{<EnderecoCliente />}</MainLayout>}
         />
         <Route
+          path="/cliente/pedidos"
+          element={<MainLayout>{<PedidosPage/>}</MainLayout>}
+        />
+        <Route
           path="/produto"
           element={<MainLayout>{<ProdutoForm />}</MainLayout>}
         />
+        
       </Route>
 
       <Route element={<PrivateRoute allowedRoles={["admin"]} />}>

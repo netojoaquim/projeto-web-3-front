@@ -72,7 +72,6 @@ const Categoria = () => {
     setEditingCategoria(null);
   };
 
-  // 🔹 Exclusão
   const handleDeleteConfirmation = (categoria) => {
     setCategoriaToDelete(categoria);
     setShowDeleteModal(true);

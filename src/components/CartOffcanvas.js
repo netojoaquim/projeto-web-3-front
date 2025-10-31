@@ -8,8 +8,7 @@ import DefaultImage from "../assets/semImagem.jpg";
 
 const CartOffcanvas = () => {
   const { showCart, handleCloseCart } = useLayout();
-  const { cartState, dispatch, removeFromCart, updateItem, fetchCart } =
-    useCart();
+  const { cartState, dispatch, removeFromCart, updateItem, fetchCart } =useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -19,7 +18,7 @@ const CartOffcanvas = () => {
     if (!userIdToFetch || !showCart) return;
 
     fetchCart();
-  }, [user, dispatch, fetchCart, showCart]);
+  }, [user, fetchCart, showCart]);
 
   const handleCheckout = () => {
     handleCloseCart();
