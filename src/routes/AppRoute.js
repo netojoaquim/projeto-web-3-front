@@ -15,21 +15,11 @@ import PrivateRoute from "./PrivateRoutes";
 const AppRoute = () => {
   return (
     <Routes>
-      {/*
-        ========================================
-        1. ROTAS DE AUTENTICAÇÃO (SEM LAYOUT)
-        Renderiza SÓ o componente (Login, Register).
-        ========================================
-        */}
+      {/*(Login, Register).*/}
       <Route path="/login" element={<Login />} />
       <Route path="/registro" element={<Register />} />
 
-      {/*
-        ========================================
-        2. ROTAS QUE USAM O LAYOUT PRINCIPAL (COM HEADER)
-        A rota '/' e outras páginas de usuário logado (PrivateRoute).
-        ========================================
-        */}
+      {/*logad*/}
       <Route
         path="/"
         element={
@@ -39,7 +29,7 @@ const AppRoute = () => {
         }
       />
 
-      {/* Envolve as rotas protegidas (PrivateRoutes) dentro do MainLayout */}
+      {/* protegida*/}
       <Route element={<PrivateRoute />}>
         <Route
           path="/checkout"
@@ -79,7 +69,7 @@ const AppRoute = () => {
         />
       </Route>
 
-      {/* Rota de Not Found */}
+      {/* Not Found */}
       <Route path="*" element={<div>404 - Página não encontrada</div>} />
     </Routes>
   );

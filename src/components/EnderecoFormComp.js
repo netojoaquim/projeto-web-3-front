@@ -20,7 +20,6 @@ const AddressForm = ({ addressData, onSuccess, onCancel }) => {
     const [error, setError] = useState(false);
     const { showAlert } = useAlert();
 
-    // Atualiza formData somente quando addressData muda
     useEffect(() => {
         if (addressData) setFormData({ ...addressData });
         else setFormData({
@@ -62,7 +61,6 @@ const AddressForm = ({ addressData, onSuccess, onCancel }) => {
 
         if (result.success) {
           setMessage(result.message);
-          // Aguarda um pequeno delay para mostrar mensagem antes de fechar
           setTimeout(() => {
             onSuccess();
             onCancel();

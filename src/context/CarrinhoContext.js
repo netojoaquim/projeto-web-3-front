@@ -86,7 +86,6 @@ export const CartProvider = ({ children }) => {
     }
   }, [user, dispatch]);
 
-  // 🔹 Adiciona item ao carrinho com verificação de estoque
   const addToCartWithStock = async (produto, quantidade) => {
     if (!user?.id) return { success: false, message: 'Usuário não identificado' };
 
@@ -101,7 +100,6 @@ export const CartProvider = ({ children }) => {
       };
     }
 
-    // atualiza estado local imediatamente
     if (existingItem) {
       dispatch({
         type: 'UPDATE_ITEM',
@@ -119,7 +117,6 @@ export const CartProvider = ({ children }) => {
       });
       triggerCartUpdate();
 
-      // garante que produto sempre seja preservado
       if (existingItem) {
         dispatch({
           type: 'UPDATE_ITEM',
@@ -148,7 +145,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // 🔹 Atualiza quantidade de um item
   const updateItem = async (itemId, quantidade) => {
     if (!user?.id) return;
     try {
@@ -162,7 +158,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // 🔹 Remove item do carrinho
   const removeFromCart = async (itemId) => {
     if (!user?.id) return;
     try {

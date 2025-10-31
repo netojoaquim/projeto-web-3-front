@@ -13,7 +13,7 @@ const PrivateRoute = ({ allowedRoles }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // Garante que pega o papel (role) do usuário corretamente
+  // Garante que pega o papel do usuário corretamente
   const userRole = user?.role || user?.tipo || user?.perfil || '';
 
   // Se houver restrição de roles e o usuário não tiver permissão
@@ -21,7 +21,6 @@ const PrivateRoute = ({ allowedRoles }) => {
     return <Navigate to="/" replace />;
   }
 
-  // Outlet = o conteúdo interno da rota protegida
   return <Outlet />;
 };
 

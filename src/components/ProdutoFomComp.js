@@ -116,7 +116,6 @@ const ProdutoFormComp = ({ produtoData, onCancel }) => {
           duration: 5000,
           bg: "#0d6efd",
         });
-      // Fecha o modal e recarrega a página somente após salvar
       if (onCancel) {
         onCancel();
         window.location.reload();
@@ -184,7 +183,7 @@ const ProdutoFormComp = ({ produtoData, onCancel }) => {
         <Form.Control type="file" accept=".jpg,.jpeg,.png,.gif" onChange={handleFileChange} />
       </Form.Group>
 
-      {/* Exibição de imagens */}
+      {/*imagens */}
       <Row className="mb-3">
         <Col>
           <Form.Label>Imagem Atual:</Form.Label>

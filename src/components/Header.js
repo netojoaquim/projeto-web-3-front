@@ -45,7 +45,7 @@ const Header = () => {
 
           <Nav className="d-flex flex-column flex-lg-row align-items-end align-lg-items-center gap-3 gap-lg-0 mt-3 mt-lg-0">
 
-            {/* 🔹 Botão de Produtos (visível para todos) */}
+            {/* para todos */}
             <LinkContainer to="/">
               <Button
                 variant="primary"
@@ -55,7 +55,7 @@ const Header = () => {
               </Button>
             </LinkContainer>
 
-            {/* 🧩 Usuário autenticado */}
+            {/*autenticado*/}
             {isAuthenticated ? (
               <>
                 {/* 🟩 ADMIN */}
@@ -90,7 +90,7 @@ const Header = () => {
                   </>
                 )}
 
-                {/* 🟦 CLIENTE */}
+                {/* cliente */}
                 {user?.role === "cliente" && (
                   <>
                     <LinkContainer to="/cliente/pedidos">
@@ -120,7 +120,7 @@ const Header = () => {
                     </Button>
                   </>
                 )}
-                {/* 👤 Perfil (comum a todos logados) */}
+                {/* logados */}
                 <Button
                   variant="primary"
                   className="d-flex align-items-center justify-content-center text-truncate w-100"
@@ -131,7 +131,7 @@ const Header = () => {
                 </Button>
               </>
             ) : (
-              /* 🔒 Não autenticado */
+              /* publico */
               <Nav className="flex-row gap-2 w-100">
                 <LinkContainer to="/login" className="flex-fill w-50">
                   <Button
@@ -156,7 +156,7 @@ const Header = () => {
         </Navbar.Collapse>
       </Container>
 
-      {/* 👤 Modal de Perfil */}
+      {/* Perfil */}
       <Modal
         show={showProfileModal}
         onHide={handleCloseProfileModal}

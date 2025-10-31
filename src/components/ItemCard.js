@@ -34,7 +34,6 @@ const ItemCard = ({ item }) => {
     setIsLoading(true);
 
     try {
-      // Busca o carrinho atual do usuário
       const res = await axios.get(`${BASE_URL}/carrinho/${user.id}`);
       const itemInCart = res.data?.itens?.find(ci => ci?.produto?.id === item?.id);
       const currentQty = itemInCart?.quantidade || 0;
@@ -51,7 +50,6 @@ const ItemCard = ({ item }) => {
         return;
       }
 
-      // Adiciona ao carrinho via contexto
       const result = await addToCartWithStock(item, quantity);
       showAlert({
           title: "Aviso!",
@@ -78,7 +76,6 @@ const ItemCard = ({ item }) => {
 
   const imageUrl = item.imagem ? `${BASE_URL}/uploads/${item.imagem}` : DEFAULT_IMAGE_URL;
 
-  // ✅ Quantidade atual no carrinho (seguro contra undefined)
   const cartItem = cartState?.items?.find(ci => ci?.produto?.id === item?.id);
   const currentQtyInCart = cartItem?.quantidade || 0;
 

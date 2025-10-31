@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
         senha: password,
       });
       const { token, usuario } = response.data;
-      const jwtToken = token.access_token; // 🔹 CORREÇÃO
+      const jwtToken = token.access_token;
 
       if (!usuario?.id)
         return { success: false, message: "Resposta inválida do servidor." };
@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const response = await api.get(`/cliente/${id}`);
-        const clientData = response.data.data || response.data; // depende do seu backend
+        const clientData = response.data.data || response.data; 
 
         setUser(clientData);
         localStorage.setItem("user", JSON.stringify(clientData));
@@ -186,8 +186,8 @@ export const AuthProvider = ({ children }) => {
   // LISTAR TODOS OS PRODUTOS
   const fetchAllProducts = async () => {
     try {
-      const response = await api.get("/produto"); // sua rota backend que retorna todos os produtos
-      return { success: true, data: response.data.data }; // ajuste dependendo do formato do backend
+      const response = await api.get("/produto"); 
+      return { success: true, data: response.data.data };
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Erro ao carregar produtos.";
@@ -226,8 +226,7 @@ export const AuthProvider = ({ children }) => {
   //listar
   const fetchCategorias = async () => {
     try {
-      const response = await api.get("/categoria"); // rota backend
-      // Ajuste conforme o retorno da sua API: pode ser response.data.data ou response.data
+      const response = await api.get("/categoria");
       const categorias = response.data.data || response.data;
       return { success: true, data: categorias };
     } catch (error) {
@@ -240,10 +239,8 @@ export const AuthProvider = ({ children }) => {
   const saveCategoria = async (categoriaData, id = null) => {
     try {
       if (id) {
-        // Atualiza categoria existente
         await api.patch(`/categoria/${id}`, categoriaData);
       } else {
-        // Cria nova categoria
         await api.post("/categoria", categoriaData);
       }
       return { success: true, message: "Categoria salva com sucesso!" };
@@ -269,7 +266,7 @@ export const AuthProvider = ({ children }) => {
   const fetchClientes = async () => {
     try {
       const response = await api.get("/cliente");
-      const clientes = response.data.data || response.data; // ajusta conforme backend
+      const clientes = response.data.data || response.data; 
       console.log(clientes);
       return { success: true, data: clientes };
     } catch (error) {
