@@ -169,13 +169,14 @@ const ProdutoForm = () => {
                 <div>
                   <strong>{prod.nome}</strong>
                   <div className="text-muted small">
-                    {prod.categoria?.descricao} — R$ {parseFloat(prod.preco).toFixed(2)}
+                    {prod.categoria?.descricao} — R$ {parseFloat(prod.preco).toFixed(2)} — Estoque: {prod.estoque}
                   </div>
                   <span
                     className={prod.ativo ? 'text-success' : 'text-danger'}
                   >
                     {prod.ativo ? 'Ativo' : 'Inativo'}
                   </span>
+                  
                 </div>
               </div>
               <div className="d-flex gap-2 mt-2 mt-md-0 flex-shrink-0">

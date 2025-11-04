@@ -242,7 +242,7 @@ const PedidosPage = () => {
                   <ListGroup.Item className="d-flex align-items-center">
                     <i className="bi bi-credit-card me-2 text-primary"></i>
                     <strong className="text-primary p-2">Pagamento:</strong>
-                    {pedido.pagamento.metodo} - {pedido.pagamento.status}
+                    {pedido.pagamento.metodo} — {pedido.pagamento.status}
                   </ListGroup.Item>
                 )}
 
