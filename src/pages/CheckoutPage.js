@@ -12,7 +12,7 @@ import {
 } from "react-bootstrap";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
-import { Navigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useCart } from "../context/CarrinhoContext";
 import { useAlert } from "../context/AlertContext";
 
@@ -21,13 +21,15 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [total, setTotal] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState("cartao");
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const {cartUpdateSignal, fetchCart } = useCart();
   const [cartItems, setCartItems] = useState([]);
   const enderecoPadrao = user?.enderecos?.find((addr) => addr.padrao === true);
   const { showAlert } = useAlert();
   const {limparCarrinho} = useCart();
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const userId = user?.id || user?.clienteId;
@@ -88,7 +90,6 @@ const CheckoutPage = () => {
       await limparCarrinho();
       fetchCart();
       setTotal(0);
-      //navigate("/pedido/sucesso");
 
       showAlert({
         title: "Aviso!",
@@ -98,6 +99,7 @@ const CheckoutPage = () => {
         bg: "#0d6efd",
       });
       setShouldRedirect(true);
+      navigate("/cliente/pedidos");
     } catch (err) {
       console.error("Erro ao finalizar compra:", err.response?.data || err);
       showAlert({
@@ -220,8 +222,8 @@ const CheckoutPage = () => {
                     </span>
                   }
                   name="paymentMethod"
-                  value="Cartão"
-                  checked={paymentMethod === "Cartão"}
+                  value="Cartao"
+                  checked={paymentMethod === "Cartao"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="mb-2"
                 />
@@ -306,7 +308,7 @@ const CheckoutPage = () => {
                 size="md"
                 className="w-100"
                 onClick={handleFinalizarCompra}
-                disabled={loading || !enderecoPadrao}
+                disabled={loading || !enderecoPadrao ||!paymentMethod}
               >
                 {loading ? (
                   <Spinner

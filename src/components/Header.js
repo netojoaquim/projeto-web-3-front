@@ -87,7 +87,8 @@ const Header = () => {
                         <i className="bi bi-people-fill me-1"></i> Categorias
                       </Button>
                     </LinkContainer>
-                    <LinkContainer to="cliente/pedidos">
+
+                    <LinkContainer to="/cliente/pedidos">
                       <Button
                         variant="primary"
                         className="d-flex align-items-center justify-content-center text-truncate w-100"

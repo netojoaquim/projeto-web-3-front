@@ -112,7 +112,7 @@ const Categoria = () => {
     setCategoriaToDelete(null);
   };
 
-  // 🔹 Estado de carregamento
+  // Estado de carregamento
   if (loading)
     return (
       <Container className="mt-5 text-center">
@@ -161,7 +161,7 @@ const Categoria = () => {
             <ListGroup.Item key={cat.id} className="d-flex justify-content-between align-items-center">
               <div>
                 {cat.descricao && (
-                  <p className="mb-0 text-muted" style={{ fontSize: '0.9rem' }}>
+                  <p className="mb-0">
                     {cat.descricao}
                   </p>
                 )}
@@ -187,7 +187,7 @@ const Categoria = () => {
         </ListGroup>
       )}
 
-      {/* 🔹 Modal de adicionar/editar */}
+      {/* adicionar/editar */}
       <Modal show={showModal} onHide={handleModalClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
@@ -203,7 +203,7 @@ const Categoria = () => {
         </Modal.Body>
       </Modal>
 
-      {/* 🔹 Modal de exclusão */}
+      {/* exclusão */}
       <Modal show={showDeleteModal} onHide={handleDeleteClose} centered>
         <Modal.Header closeButton>
           <Modal.Title className="text-danger">Confirmação de Exclusão</Modal.Title>

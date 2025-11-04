@@ -19,7 +19,7 @@ const AppRoute = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/registro" element={<Register />} />
 
-      {/*logad*/}
+      {/*logado*/}
       <Route
         path="/"
         element={
@@ -28,12 +28,10 @@ const AppRoute = () => {
           </MainLayout>
         }
       />
-
-      {/* protegida*/}
-      <Route element={<PrivateRoute />}>
+      <Route element={<PrivateRoute allowedRoles={["cliente", "admin"]} />}>
         <Route
-          path="/checkout"
-          element={<MainLayout>{<CheckoutPage />}</MainLayout>}
+          path="/cliente/pedidos"
+          element={<MainLayout>{<PedidosPage />}</MainLayout>}
         />
         <Route
           path="/cliente/dados"
@@ -43,17 +41,15 @@ const AppRoute = () => {
           path="/cliente/enderecos"
           element={<MainLayout>{<EnderecoCliente />}</MainLayout>}
         />
-        <Route
-          path="/cliente/pedidos"
-          element={<MainLayout>{<PedidosPage/>}</MainLayout>}
-        />
-        <Route
-          path="/produto"
-          element={<MainLayout>{<ProdutoForm />}</MainLayout>}
-        />
-        
       </Route>
-
+      {/* protegida cliente*/}
+      <Route element={<PrivateRoute allowedRoles={["cliente"]} />}>
+        <Route
+          path="/checkout"
+          element={<MainLayout>{<CheckoutPage />}</MainLayout>}
+        />
+      </Route>
+      {/*protegida admin*/}
       <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
         <Route
           path="/produto/novo"
@@ -66,6 +62,10 @@ const AppRoute = () => {
         <Route
           path="cliente"
           element={<MainLayout>{<ClienteForm />}</MainLayout>}
+        />
+        <Route
+          path="/produto"
+          element={<MainLayout>{<ProdutoForm />}</MainLayout>}
         />
       </Route>
 

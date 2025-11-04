@@ -184,7 +184,7 @@ const ItemCard = ({ item }) => {
           <Button
             variant="primary"
             onClick={handleAddToCart}
-            disabled={isLoading || (currentQtyInCart + quantity > item.estoque)}
+            disabled={isLoading || (currentQtyInCart + quantity > item.estoque)||user.role==="admin"}
           >
             {isLoading ? 'Adicionando...' : (
               <>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Spinner, Alert, Image, Row, Col } from 'react-bootstrap';
+import { Form, Button, Spinner, Image, Row, Col } from 'react-bootstrap';
 import api from '../api/api';
 import { useAlert } from '../context/AlertContext';
 
@@ -30,7 +30,13 @@ const ProdutoFormComp = ({ produtoData, onCancel }) => {
         setCategories(res.data.data || res.data);
       } catch (err) {
         console.error('Erro ao buscar categorias:', err);
-        setError('Não foi possível carregar as categorias.');
+        showAlert({
+          title: "Erro!",
+          message: "Erro erro ao buscar categorias",
+          type: "warning",
+          duration: 5000,
+          bg: "#ff0000",
+        });
       } finally {
         setLoadingCategories(false);
       }
@@ -98,7 +104,7 @@ const ProdutoFormComp = ({ produtoData, onCancel }) => {
         descricao: formData.descricao,
         preco: parsePrice(formData.preco),
         estoque: parseInt(formData.estoque, 10),
-        categoria: { id: parseInt(formData.categoriaId, 10) }, 
+        categoria: { id: parseInt(formData.categoriaId, 10) },
         ativo: formData.ativo,
         imagem: finalFilename,
       };
