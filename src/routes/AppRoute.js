@@ -12,6 +12,8 @@ import CheckoutPage from "../pages/CheckoutPage";
 import PedidosPage from "../pages/PedidoPage";
 import Register from "../pages/Register";
 import PrivateRoute from "./PrivateRoutes";
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
 const AppRoute = () => {
   return (
     <Routes>
@@ -28,6 +30,14 @@ const AppRoute = () => {
           </MainLayout>
         }
       />
+      <Route
+          path="/recuperacao"
+          element={<MainLayout>{<ForgotPassword />}</MainLayout>}
+        />
+        <Route
+          path="/reset"
+          element={<MainLayout>{<ResetPassword />}</MainLayout>}
+        />
       <Route element={<PrivateRoute allowedRoles={["cliente", "admin"]} />}>
         <Route
           path="/cliente/pedidos"

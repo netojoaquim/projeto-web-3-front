@@ -18,12 +18,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userDataString = localStorage.getItem("user");
-    //console.log('AuthContext init -> token:', token);
-    //console.log('AuthContext init -> userDataString:', userDataString);
     if (token && userDataString) {
       try {
         const userData = JSON.parse(userDataString);
-        console.log('AuthContext -> userData parseado:', userData);
+        console.log("AuthContext -> userData parseado:", userData);
         setIsAuthenticated(true);
         setUser(userData);
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -49,11 +47,12 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: "Resposta inválida do servidor." };
 
       if (!usuario.ativo) {
-      return {
-        success: false,
-        message: "Sua conta está desativada. Contate o suporte para reativação.",
-      };
-    }
+        return {
+          success: false,
+          message:
+            "Sua conta está desativada. Contate o suporte para reativação.",
+        };
+      }
 
       localStorage.setItem("token", jwtToken);
       localStorage.setItem("user", JSON.stringify(usuario));
@@ -96,8 +95,37 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: errorMessage };
     }
   };
+  const forgotPassword = async (email) => {
+    try {
+      const { data } = await api.post("/auth/forgot-password", {email});
+      return { success: true, message: data?.message || "Email enviado com sucesso." };
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        "Erro ao enviar solicitação de recuperação.";
+      return { success: false, message };
+    }
+  };
 
-  // Busca dados do cliente
+ 
+  const resetPassword = async (email, code, newPassword) => {
+    try {
+      const { data } = await api.post("/auth/reset-password", {
+        email,
+        code,
+        newPassword,
+      });
+      return { success: true, message: data?.message || "Senha redefinida com sucesso." };
+    } catch (error) {
+      console.error("Erro em resetPassword:", error);
+      const message =
+        error.response?.data?.message ||
+        "Erro ao redefinir senha. Verifique o código ou tente novamente.";
+      return { success: false, message };
+    }
+  };
+
+
   const fetchClientData = useCallback(
     async (userId) => {
       const id = userId || user?.id;
@@ -120,7 +148,6 @@ export const AuthProvider = ({ children }) => {
           error.response?.data?.message || "Erro ao carregar dados do perfil.";
         return { success: false, message: errorMessage };
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [user]
   );
@@ -193,7 +220,7 @@ export const AuthProvider = ({ children }) => {
   // LISTAR TODOS OS PRODUTOS
   const fetchAllProducts = async () => {
     try {
-      const response = await api.get("/produto"); 
+      const response = await api.get("/produto");
       return { success: true, data: response.data.data };
     } catch (error) {
       const errorMessage =
@@ -343,6 +370,8 @@ export const AuthProvider = ({ children }) => {
         saveCliente,
         deleteCliente,
         updateClienteRoleAtivo,
+        resetPassword,
+        forgotPassword
       }}
     >
       {children}

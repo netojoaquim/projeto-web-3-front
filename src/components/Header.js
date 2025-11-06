@@ -5,6 +5,8 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CarrinhoContext";
 import { useLayout } from "../context/LayoutContext";
 import { useAlert } from "../context/AlertContext";
+import logo from "../assets/logo.png";
+
 const Header = () => {
   const { isAuthenticated, logout, user } = useAuth();
   const { cartState } = useCart();
@@ -34,8 +36,23 @@ const Header = () => {
     <Navbar bg="light" expand="lg" sticky="top" className="shadow-sm py-2">
       <Container>
         <LinkContainer to="/">
-          <Navbar.Brand className="fw-bold fs-4 text-primary">
-            <i className="bi bi-shop me-2"></i>GuaraShopp
+          <Navbar.Brand className="fw-bold fs-4 text-primary d-flex align-items-center">
+            <img
+            src={logo}
+            alt="Logo da Empresa"
+            width="100"
+            height="100"
+            className="d-inline-block align-top"
+          />
+          <span
+            style={{
+              fontSize: "2rem",
+              fontWeight: "bold",
+              marginLeft: ".6em"
+            }}
+          >
+            GuaraShopp
+          </span>
           </Navbar.Brand>
         </LinkContainer>
 
@@ -176,15 +193,7 @@ const Header = () => {
           <Modal.Title>
             Olá,{" "}
             <strong>
-              {(() => {
-                const nomeCompleto =
-                  user?.nomeCliente ||
-                  user?.nome ||
-                  user?.username ||
-                  user?.email?.split("@")[0] ||
-                  "usuário";
-                return nomeCompleto.split(" ")[0];
-              })()}
+            {user?.nome_completo.split(" ")[0]}
             </strong>
             !
           </Modal.Title>

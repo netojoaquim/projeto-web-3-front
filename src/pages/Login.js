@@ -74,9 +74,9 @@ const Login = () => {
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
       <Row className="w-100 justify-content-center">
-        <Col xs={12} sm={8} md={6} lg={4}>
+        <Col xs={12} sm={8} md={8} lg={6}>
           <div className="p-4 shadow rounded bg-light">
-            <h2 className="text-center mb-4">Login</h2>
+            <h1 className="text-center mb-4 text-primary">Login</h1>
             <Form onSubmit={handleSubmit}>
 
               {/* ALERTA DE ERRO */}
@@ -123,7 +123,7 @@ const Login = () => {
                 <Link to="/registro" className="text-decoration-none me-3 col-12">
                   Cadastre-se
                 </Link>
-                <Link to="/forgot-password" className="text-decoration-none w-100">
+                <Link to="/recuperacao" className="text-decoration-none w-100">
                   Esqueceu a senha?
                 </Link>
               </div>
