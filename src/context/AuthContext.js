@@ -48,6 +48,13 @@ export const AuthProvider = ({ children }) => {
       if (!usuario?.id)
         return { success: false, message: "Resposta inválida do servidor." };
 
+      if (!usuario.ativo) {
+      return {
+        success: false,
+        message: "Sua conta está desativada. Contate o suporte para reativação.",
+      };
+    }
+
       localStorage.setItem("token", jwtToken);
       localStorage.setItem("user", JSON.stringify(usuario));
       api.defaults.headers.common["Authorization"] = `Bearer ${jwtToken}`;
@@ -102,7 +109,7 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const response = await api.get(`/cliente/${id}`);
-        const clientData = response.data.data || response.data; 
+        const clientData = response.data.data || response.data;
 
         setUser(clientData);
         localStorage.setItem("user", JSON.stringify(clientData));
@@ -266,7 +273,7 @@ export const AuthProvider = ({ children }) => {
   const fetchClientes = async () => {
     try {
       const response = await api.get("/cliente");
-      const clientes = response.data.data || response.data; 
+      const clientes = response.data.data || response.data;
       console.log(clientes);
       return { success: true, data: clientes };
     } catch (error) {

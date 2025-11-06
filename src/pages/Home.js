@@ -23,9 +23,11 @@ const Home = () => {
             setError(null);
             try {
                 const response = await api.get(PRODUCTS_ENDPOINT);
-                const produtosData = response.data.data || response.data;
-                setProdutos(produtosData);
-                setFilteredProdutos(produtosData);
+                const produtosData = response.data.data;
+                const produtosAtivos = produtosData.filter(prod => prod.ativo === true);
+
+                setProdutos(produtosAtivos);
+                setFilteredProdutos(produtosAtivos);
             } catch (err) {
                 console.error("Erro ao buscar produtos:", err);
                 setError('Não foi possível carregar os produtos.');

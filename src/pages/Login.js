@@ -48,7 +48,7 @@ const Login = () => {
       } else {
         showAlert({
           title: "Erro!",
-          message: "Usuário ou senha incorretos.",
+          message: success.message,
           type: "warning",
           duration: 5000,
           bg: "#ff0000",

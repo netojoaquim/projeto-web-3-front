@@ -64,7 +64,7 @@ const ItemCard = ({ item }) => {
       console.error(err);
       showAlert({
           title: "Erro!",
-          message: "Não foi possível adicionar o produto ao carrinho.",
+          message: "Não foi possível adicionar o produto ao carrinho. Faça login primeiro",
           type: "warning",
           duration: 5000,
           bg: "#ff0000",
@@ -184,7 +184,7 @@ const ItemCard = ({ item }) => {
           <Button
             variant="primary"
             onClick={handleAddToCart}
-            disabled={isLoading || (currentQtyInCart + quantity > item.estoque)||user.role==="admin"}
+            disabled={isLoading || (currentQtyInCart + quantity > item.estoque)||user?.role==="admin"}
           >
             {isLoading ? 'Adicionando...' : (
               <>
