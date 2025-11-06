@@ -43,13 +43,13 @@ const Header = () => {
         <Navbar.Collapse id="navbar-nav">
           <Nav className="me-auto" />
 
-          <Nav className="d-flex flex-column flex-lg-row align-items-end align-lg-items-center gap-3 gap-lg-0 mt-3 mt-lg-0">
+          <Nav className="d-grid gap-1 d-lg-flex align-items-center mt-3 mt-lg-0">
 
             {/* para todos */}
             <LinkContainer to="/">
               <Button
                 variant="primary"
-                className="d-flex align-items-center justify-content-center text-truncate w-100"
+                className="d-flex align-items-center justify-content-center w-100"
               >
                 <i className="bi bi-bag-fill me-1"></i> Produtos
               </Button>
@@ -64,16 +64,16 @@ const Header = () => {
                     <LinkContainer to="/produto">
                       <Button
                         variant="primary"
-                        className="d-flex align-items-center justify-content-center text-truncate w-100"
+                        className="d-flex align-items-center justify-content-center w-100 "
                       >
-                        <i className="bi bi-box-seam me-1"></i> Gerenciar Produtos
+                        <i className="bi bi-box-seam me-1"></i> Cadastros
                       </Button>
                     </LinkContainer>
 
                     <LinkContainer to="/cliente">
                       <Button
                         variant="primary"
-                        className="d-flex align-items-center justify-content-center text-truncate w-100"
+                        className="d-flex align-items-center justify-content-center w-100"
                       >
                         <i className="bi bi-people-fill me-1"></i> Usuários
                       </Button>
@@ -82,7 +82,7 @@ const Header = () => {
                     <LinkContainer to="/produto/categoria">
                       <Button
                         variant="primary"
-                        className="d-flex align-items-center justify-content-center text-truncate w-100"
+                        className="d-flex align-items-center justify-content-center w-100"
                       >
                         <i className="bi bi-people-fill me-1"></i> Categorias
                       </Button>
@@ -91,7 +91,7 @@ const Header = () => {
                     <LinkContainer to="/cliente/pedidos">
                       <Button
                         variant="primary"
-                        className="d-flex align-items-center justify-content-center text-truncate w-100"
+                        className="d-flex align-items-center justify-content-center w-100"
                       >
                         <i className="bi bi-people-fill me-1"></i> Pedidos
                       </Button>
@@ -141,11 +141,11 @@ const Header = () => {
               </>
             ) : (
               /* publico */
-              <Nav className="flex-row gap-2 w-100">
+              <Nav className="d-grid gap-1 d-lg-flex align-items-center mt-3 mt-lg-0">
                 <LinkContainer to="/login" className="flex-fill w-50">
                   <Button
-                    variant="outline-primary"
-                    className="w-100 align-items-center justify-content-center"
+                    variant="primary"
+                    className="d-flex align-items-center justify-content-center text-truncate w-100 position-relative"
                   >
                     <i className="bi bi-box-arrow-in-right me-1"></i> Login
                   </Button>
@@ -154,7 +154,7 @@ const Header = () => {
                 <LinkContainer to="/registro" className="flex-fill w-50">
                   <Button
                     variant="primary"
-                    className="w-100 align-items-center justify-content-center"
+                    className="d-flex align-items-center justify-content-center text-truncate w-100 position-relative"
                   >
                     <i className="bi bi-person-plus-fill me-1"></i> Cadastrar
                   </Button>
