@@ -111,9 +111,14 @@ const ProdutoForm = () => {
   };
 
   return (
-    <Container style={{ maxWidth: '900px' }} className="mt-5 mb-5 p-4 border rounded shadow-sm">
+    <Container
+      style={{ maxWidth: "900px" }}
+      className="mt-5 mb-5 p-4 border rounded shadow-sm"
+    >
       <div className="d-flex justify-content-between align-items-center mb-4 ">
-        <h2 className='text-primary'>Produtos</h2>
+        <h2 className="text-primary">
+          <i className="bi bi-bag-fill me-2"></i>Itens
+        </h2>
         <Button variant="primary" onClick={handleAddClick}>
           <i className="bi bi-plus-circle me-2"></i> Incluir produto
         </Button>
@@ -125,15 +130,15 @@ const ProdutoForm = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <Button variant="primary" onClick={() => setSearch('')}>
+        <Button variant="primary" onClick={() => setSearch("")}>
           <i className="bi bi-x-circle"></i>
         </Button>
       </InputGroup>
 
       {message && (
         <Alert
-          variant={error ? 'danger' : 'success'}
-          onClose={() => setMessage('')}
+          variant={error ? "danger" : "success"}
+          onClose={() => setMessage("")}
           dismissible
         >
           {message}
@@ -162,21 +167,20 @@ const ProdutoForm = () => {
                   style={{
                     width: 60,
                     height: 60,
-                    objectFit: 'cover',
+                    objectFit: "cover",
                     borderRadius: 5,
                   }}
                 />
                 <div>
                   <strong>{prod.nome}</strong>
                   <div className="text-muted small">
-                    {prod.categoria?.descricao} — R$ {parseFloat(prod.preco).toFixed(2)} — Estoque: {prod.estoque}
+                    {prod.categoria?.descricao} — R${" "}
+                    {parseFloat(prod.preco).toFixed(2)} — Estoque:{" "}
+                    {prod.estoque}
                   </div>
-                  <span
-                    className={prod.ativo ? 'text-success' : 'text-danger'}
-                  >
-                    {prod.ativo ? 'Ativo' : 'Inativo'}
+                  <span className={prod.ativo ? "text-success" : "text-danger"}>
+                    {prod.ativo ? "Ativo" : "Inativo"}
                   </span>
-                  
                 </div>
               </div>
               <div className="d-flex gap-2 mt-2 mt-md-0 flex-shrink-0">
@@ -204,7 +208,7 @@ const ProdutoForm = () => {
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            {editingProduct ? 'Editar Produto' : 'Adicionar Produto'}
+            {editingProduct ? "Editar Produto" : "Adicionar Produto"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -217,12 +221,19 @@ const ProdutoForm = () => {
       </Modal>
 
       {/* Modal exclusão */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+      <Modal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+        centered
+      >
         <Modal.Header closeButton>
-          <Modal.Title className="text-danger">Confirmação de Exclusão</Modal.Title>
+          <Modal.Title className="text-danger">
+            Confirmação de Exclusão
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Tem certeza que deseja remover o produto: <b>{productToDelete?.nome}</b>?
+          Tem certeza que deseja remover o produto:{" "}
+          <b>{productToDelete?.nome}</b>?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>

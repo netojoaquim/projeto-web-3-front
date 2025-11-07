@@ -122,29 +122,34 @@ const Categoria = () => {
     );
 
   return (
-    <Container style={{ maxWidth: '900px' }} className="mt-5 mb-5 p-4 border rounded shadow-sm">
+    <Container
+      style={{ maxWidth: "900px" }}
+      className="mt-5 mb-5 p-4 border rounded shadow-sm"
+    >
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="text-primary">Categorias</h2>
-        <Button variant="primary" className='w-50' onClick={handleAddClick}>
+        <h2 className="text-primary">
+          <i class="bi bi-list-ol me-2"></i>Categorias
+        </h2>
+        <Button variant="primary" className="w-50" onClick={handleAddClick}>
           <i className="bi bi-plus-circle me-2"></i> Incluir Categoria
         </Button>
       </div>
-      <InputGroup className='w-md-50 mb-4 ms-auto'>
-          <Form.Control
-            type="text"
-            placeholder="Pesquisar por nome..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Button variant="primary" onClick={() => setSearch('')}>
-            <i className="bi bi-x-circle"></i>
-          </Button>
-        </InputGroup>
+      <InputGroup className="w-md-50 mb-4 ms-auto">
+        <Form.Control
+          type="text"
+          placeholder="Pesquisar por nome..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Button variant="primary" onClick={() => setSearch("")}>
+          <i className="bi bi-x-circle"></i>
+        </Button>
+      </InputGroup>
 
       {message && (
         <Alert
-          variant={error ? 'danger' : 'success'}
-          onClose={() => setMessage('')}
+          variant={error ? "danger" : "success"}
+          onClose={() => setMessage("")}
           dismissible
         >
           {message}
@@ -158,13 +163,12 @@ const Categoria = () => {
       ) : (
         <ListGroup variant="flush">
           {filteredCategoria.map((cat) => (
-            <ListGroup.Item key={cat.id} className="d-flex justify-content-between align-items-center">
+            <ListGroup.Item
+              key={cat.id}
+              className="d-flex justify-content-between align-items-center"
+            >
               <div>
-                {cat.descricao && (
-                  <p className="mb-0">
-                    {cat.descricao}
-                  </p>
-                )}
+                {cat.descricao && <p className="mb-0">{cat.descricao}</p>}
               </div>
               <div className="d-flex gap-2">
                 <Button
@@ -191,7 +195,7 @@ const Categoria = () => {
       <Modal show={showModal} onHide={handleModalClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            {editingCategoria ? 'Editar Categoria' : 'Adicionar Nova Categoria'}
+            {editingCategoria ? "Editar Categoria" : "Adicionar Nova Categoria"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -206,11 +210,14 @@ const Categoria = () => {
       {/* exclusão */}
       <Modal show={showDeleteModal} onHide={handleDeleteClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title className="text-danger">Confirmação de Exclusão</Modal.Title>
+          <Modal.Title className="text-danger">
+            Confirmação de Exclusão
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Tem certeza que deseja excluir a categoria: <b>{categoriaToDelete?.descricao}</b>?
-          Esta ação não pode ser desfeita.
+          Tem certeza que deseja excluir a categoria:{" "}
+          <b>{categoriaToDelete?.descricao}</b>? Esta ação não pode ser
+          desfeita.
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleDeleteClose}>

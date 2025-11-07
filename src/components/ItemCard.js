@@ -3,8 +3,8 @@ import { Card, Button, Modal, Form, Alert } from 'react-bootstrap';
 import DefaultImage from '../assets/semImagem.jpg';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CarrinhoContext';
-import axios from 'axios';
 import { useAlert } from '../context/AlertContext';
+import api from '../api/api';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 const DEFAULT_IMAGE_URL = DefaultImage;
@@ -34,8 +34,11 @@ const ItemCard = ({ item }) => {
     setIsLoading(true);
 
     try {
-      const res = await axios.get(`${BASE_URL}/carrinho/${user.id}`);
-      const itemInCart = res.data?.itens?.find(ci => ci?.produto?.id === item?.id);
+      const res = await api.get(`${BASE_URL}/carrinho/${user.id}`, {
+      });
+      const itemInCart = res.data?.itens?.find(
+        (ci) => ci?.produto?.id === item?.id
+      );
       const currentQty = itemInCart?.quantidade || 0;
 
       if (currentQty + quantity > item.estoque) {
@@ -44,7 +47,7 @@ const ItemCard = ({ item }) => {
           message: "Quantidade solicitada excede o estoque disponível.",
           type: "warning",
           duration: 5000,
-          bg: "#0d6efd",
+          bg: "#ff0000",
         });
         setIsLoading(false);
         return;
@@ -52,23 +55,24 @@ const ItemCard = ({ item }) => {
 
       const result = await addToCartWithStock(item, quantity);
       showAlert({
-          title: "Aviso!",
-          message: "Produto adicionado ao carrinho com sucesso.",
-          type: "warning",
-          duration: 5000,
-          bg: "#0d6efd",
-        });
+        title: "Aviso!",
+        message: "Produto adicionado ao carrinho com sucesso.",
+        type: "warning",
+        duration: 5000,
+        bg: "#0d6efd",
+      });
 
       if (result.success) setTimeout(() => handleClose(), 1000);
     } catch (err) {
       console.error(err);
       showAlert({
-          title: "Erro!",
-          message: "Não foi possível adicionar o produto ao carrinho. Faça login primeiro",
-          type: "warning",
-          duration: 5000,
-          bg: "#ff0000",
-        });
+        title: "Erro!",
+        message:
+          "Não foi possível adicionar o produto ao carrinho. Faça login primeiro",
+        type: "warning",
+        duration: 5000,
+        bg: "#ff0000",
+      });
     } finally {
       setIsLoading(false);
     }

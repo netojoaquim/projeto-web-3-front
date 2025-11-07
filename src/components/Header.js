@@ -101,7 +101,7 @@ const Header = () => {
                         variant="primary"
                         className="d-flex align-items-center justify-content-center w-100"
                       >
-                        <i className="bi bi-people-fill me-1"></i> Categorias
+                        <i className="bi bi-list-ol me-1"></i> Categorias
                       </Button>
                     </LinkContainer>
 
@@ -110,7 +110,7 @@ const Header = () => {
                         variant="primary"
                         className="d-flex align-items-center justify-content-center w-100"
                       >
-                        <i className="bi bi-people-fill me-1"></i> Pedidos
+                        <i className="bi bi-receipt-cutoff me-2"></i> Pedidos
                       </Button>
                     </LinkContainer>
                   </>

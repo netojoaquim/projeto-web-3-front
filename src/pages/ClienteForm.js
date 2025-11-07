@@ -89,7 +89,7 @@ const ClienteForm = () => {
       className="mt-5 mb-5 p-4 border rounded shadow-sm"
     >
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="text-primary me-3">Clientes</h2>
+        <h2 className="text-primary me-3"><i className="bi bi-people-fill me-2"></i>Usuários</h2>
       </div>
       <InputGroup className='w-md-50 mb-4 ms-auto'>
           <Form.Control
@@ -130,7 +130,7 @@ const ClienteForm = () => {
                   {cliente.email}
                 </p>
                 <p className="mb-0 text-muted" style={{ fontSize: '0.85rem' }}>
-                  Role: <b>{cliente.role}</b> |{' '}
+                  Nível do usuário: <b>{cliente.role}</b> |{' '}
                   <span
                     className={cliente.ativo ? 'text-success' : 'text-danger'}
                   >

@@ -1,10 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect,useState } from 'react';
-import axios from 'axios';
 import { useAuth } from './AuthContext';
 import api from '../api/api';
 import { useCallback } from 'react';
-
-const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const initialState = {
   cartId: null,
@@ -111,7 +108,7 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
-      const res = await axios.post(`${BASE_URL}/carrinho/${user.id}/item`, {
+      const res = await api.post(`/carrinho/${user.id}/item`, {
         produtoId: produto.id,
         quantidade,
       });
@@ -148,7 +145,7 @@ export const CartProvider = ({ children }) => {
   const updateItem = async (itemId, quantidade) => {
     if (!user?.id) return;
     try {
-      const res = await axios.patch(`${BASE_URL}/carrinho/${user.id}/item/${itemId}`, {
+      const res = await api.patch(`/carrinho/${user.id}/item/${itemId}`, {
         quantidade: Number(quantidade),
       });
       dispatch({ type: 'UPDATE_ITEM', payload: res.data });
@@ -161,7 +158,7 @@ export const CartProvider = ({ children }) => {
   const removeFromCart = async (itemId) => {
     if (!user?.id) return;
     try {
-      await axios.delete(`${BASE_URL}/carrinho/${user.id}/item/${itemId}`);
+      await api.delete(`/carrinho/${user.id}/item/${itemId}`);
       dispatch({ type: 'REMOVE_ITEM', payload: itemId });
       triggerCartUpdate();
     } catch (err) {
@@ -173,7 +170,7 @@ export const CartProvider = ({ children }) => {
   if (!user?.id) return;
 
   try {
-    await axios.delete(`${BASE_URL}/carrinho/${user.id}/limpar`);
+    await api.delete(`/carrinho/${user.id}/limpar`);
     localStorage.removeItem("carrinho");
     dispatch({ type: 'CLEAR_CART' });
     triggerCartUpdate();
@@ -181,11 +178,9 @@ export const CartProvider = ({ children }) => {
     console.error('Erro ao limpar carrinho:', err);
   }
 };
-
-
   useEffect(() => {
     if (user?.id) fetchCart();
-  }, [user?.id]);
+  }, [user?.id,fetchCart]);
 
   return (
     <CartContext.Provider

@@ -21,7 +21,6 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
-  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { showAlert } = useAlert();
   
@@ -166,7 +165,7 @@ const Register = () => {
   const toggleShowPassword = () => setShowPassword((prev) => !prev);
   return (
     <Container style={{ maxWidth: "500px" }} className="mt-5">
-      <h2 className="mb-4 text-center">Criar sua Conta</h2>
+      <h2 className="mb-4 text-center text-primary">Criar sua Conta</h2>
 
       {loading && (
         <div className="text-center">

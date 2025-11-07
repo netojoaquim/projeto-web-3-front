@@ -147,7 +147,7 @@ const EnderecosCliente = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="text-primary">Meus Endereços</h2>
         <Button variant="primary" onClick={handleAddClick}>
-          <i className="bi bi-plus-circle me-2"></i> Incluir Novo Endereço
+          <i className="bi bi-plus-circle me-2"></i> Incluir Endereço
         </Button>
       </div>
 
