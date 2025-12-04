@@ -72,7 +72,7 @@ const Login = () => {
   const toggleShowPassword = () => setShowPassword((prev) => !prev);
 
   return (
-    <Container className="d-flex justify-content-center align-items-center vh-100">
+    <Container className="d-flex justify-content-center align-items mt-5 vh-100">
       <Row className="w-100 justify-content-center">
         <Col xs={12} sm={8} md={8} lg={6}>
           <div className="p-4 shadow rounded bg-light">
@@ -104,6 +104,8 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    autoComplete="current-password"
+                    name="password"
                   />
                   <Button
                     variant="outline-primary"

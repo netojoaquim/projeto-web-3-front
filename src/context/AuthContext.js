@@ -4,10 +4,12 @@ import React, {
   useContext,
   useEffect,
   useCallback,
+  createRef,
 } from "react";
 import api from "../api/api";
 
 const AuthContext = createContext();
+export const logoutRef = createRef();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -80,6 +82,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     delete api.defaults.headers.common["Authorization"];
   };
+  logoutRef.current = logout;
 
   const register = async (userData) => {
     try {

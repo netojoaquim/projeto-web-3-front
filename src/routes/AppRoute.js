@@ -18,8 +18,8 @@ const AppRoute = () => {
   return (
     <Routes>
       {/*(Login, Register).*/}
-      <Route path="/login" element={<Login />} />
-      <Route path="/registro" element={<Register />} />
+      <Route path="/login" element={<MainLayout>{<Login />}</MainLayout>}/>
+      <Route path="/registro" element={<MainLayout>{<Register />}</MainLayout>}/>
 
       {/*logado*/}
       <Route

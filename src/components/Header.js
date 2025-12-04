@@ -33,7 +33,7 @@ const Header = () => {
   const handleShowProfileModal = () => setShowProfileModal(true);
 
   return (
-    <Navbar bg="light" expand="lg" sticky="top" className="shadow-sm py-2">
+    <Navbar bg="light" expand="lg" sticky="top" className="shadow-sm py-2 d-flex justify-content-between">
       <Container>
         <LinkContainer to="/">
           <Navbar.Brand className="fw-bold fs-4 text-primary d-flex align-items-center">
@@ -54,9 +54,11 @@ const Header = () => {
             GuaraShopp
           </span>
           </Navbar.Brand>
+          
         </LinkContainer>
+        <Navbar.Toggle aria-controls="navbar-nav" className="ms-auto w-100"/>
 
-        <Navbar.Toggle aria-controls="navbar-nav" />
+        
         <Navbar.Collapse id="navbar-nav">
           <Nav className="me-auto" />
 
