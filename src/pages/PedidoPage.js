@@ -14,6 +14,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import api from "../api/api";
 import PedidoFormComp from "../components/PedidoFormComp";
+import PedidoFormCompCancelar from "../components/PedidoFormCompCancelar";
 import { useAlert } from "../context/AlertContext";
 
 const PedidosPage = () => {
@@ -26,8 +27,9 @@ const PedidosPage = () => {
   const [error, setError] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingPedido, setEditingPedido] = useState(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelingPedido, setCancelingPedido] = useState(null);
 
-  // 🔄 Carregar pedidos
   const loadPedidos = useCallback(async () => {
     setLoading(true);
     setMessage("");
@@ -69,7 +71,6 @@ const PedidosPage = () => {
     loadPedidos();
   }, [loadPedidos]);
 
-  // ✏️ Ações do modal
   const handleEditClick = useCallback((pedido) => {
     setEditingPedido(pedido);
     setShowModal(true);
@@ -80,7 +81,7 @@ const PedidosPage = () => {
     setEditingPedido(null);
   }, []);
 
-  // ✅ Atualização de pedido concluída
+
   const handlePedidoUpdateSuccess = useCallback(
     (updateMessage) => {
       handleModalClose();
@@ -95,11 +96,27 @@ const PedidosPage = () => {
     [handleModalClose, showAlert, loadPedidos]
   );
 
-  // 🔁 Atualizar status do pedido
+
+  const handleCancelClick = useCallback((pedido) => {
+    setCancelingPedido(pedido);
+    setShowCancelModal(true);
+  }, []);
+
+  const handleCancelModalClose = useCallback(() => {
+    setShowCancelModal(false);
+    setCancelingPedido(null);
+  }, []);
+
+
   const handleStatusUpdate = useCallback(
-    async (pedidoId, newStatus, successMessage) => {
+    async (pedidoId, newStatus, successMessage, motivoCancelamento = null) => {
       try {
-        await api.patch(`/pedido/${pedidoId}/status`, { status: newStatus });
+        const payload = { status: newStatus };
+        if (newStatus === "CANCELADO" && motivoCancelamento) {
+          payload.motivo_cancelamento = motivoCancelamento;
+        }
+
+        await api.patch(`/pedido/${pedidoId}/status`, payload);
 
         showAlert({
           title: "Sucesso!",
@@ -107,9 +124,9 @@ const PedidosPage = () => {
           bg: "#0d6efd",
           duration: 4000,
         });
-
-        // Pequeno delay para garantir atualização visual fluida
         setTimeout(() => loadPedidos(), 50);
+        return true;
+
       } catch (err) {
         console.error(`Erro ao atualizar pedido ${pedidoId}:`, err);
         showAlert({
@@ -118,10 +135,28 @@ const PedidosPage = () => {
           bg: "#dc3545",
           duration: 5000,
         });
+        return false;
       }
     },
     [showAlert, loadPedidos]
   );
+
+  const handleConfirmCancel = useCallback(async (justificativa) => {
+    if (!cancelingPedido) return;
+
+    const success = await handleStatusUpdate(
+      cancelingPedido.id,
+      "CANCELADO",
+      "Pedido cancelado com sucesso.",
+      justificativa
+    );
+
+    if (success) {
+        handleCancelModalClose();
+    }
+    return success;
+  }, [cancelingPedido, handleStatusUpdate, handleCancelModalClose]);
+
 
   const formatCurrency = (value) =>
     new Intl.NumberFormat("pt-BR", {
@@ -149,7 +184,6 @@ const PedidosPage = () => {
         </h2>
       </div>
 
-      {/* Mensagem informativa */}
       {message && (
         <Alert
           variant={error ? "danger" : "info"}
@@ -166,7 +200,6 @@ const PedidosPage = () => {
         </Alert>
       )}
 
-      {/* Lista de pedidos */}
       {pedidos.length === 0 && !error ? (
         <Alert variant="secondary" className="text-center shadow-sm">
           <i className="bi bi-clipboard-x me-2 text-primary"></i>
@@ -213,7 +246,19 @@ const PedidosPage = () => {
                         } me-1`}
                       ></i>
                       <span className="text-black">{pedido.status}</span>
+
                     </Badge>
+                    {pedido.status === "CANCELADO" && pedido.motivo_cancelamento && (
+                    <ListGroup.Item className="d-flex mt-2 flex-column align-items-start bg-danger bg-opacity-25 border-danger ">
+                        <div className="mb-1">
+                            <i className="bi bi-info-circle me-2 text-danger"></i>
+                            <span className="fw-medium text-danger">Motivo do Cancelamento:</span>
+                        </div>
+                        <div>
+                            {pedido.motivo_cancelamento}
+                        </div>
+                    </ListGroup.Item>
+                )}
                   </Col>
                 </Row>
               </Card.Header>
@@ -266,7 +311,6 @@ const PedidosPage = () => {
                 )}
               </ListGroup>
 
-              {/* Botões de ação — somente se "aguardando pagamento" */}
               {isEditable && (
                 <Card.Body className="pt-2 pb-3 d-flex justify-content-end gap-2">
                   <Button
@@ -277,9 +321,17 @@ const PedidosPage = () => {
                     <i className="bi bi-pencil-square me-1"></i> Alterar pagamento
                   </Button>
 
+                  {(user.role === "admin" || user.role === "cliente") && (
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleCancelClick(pedido)}
+                    >
+                      <i className="bi bi-x-circle me-1"></i> Cancelar
+                    </Button>
+                  )}
                   {user.role === "admin" && (
-                    <>
-                      <Button
+                     <Button
                         variant="success"
                         size="sm"
                         onClick={() =>
@@ -292,36 +344,6 @@ const PedidosPage = () => {
                       >
                         <i className="bi bi-check-circle me-1"></i> Pedido pago
                       </Button>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() =>
-                          handleStatusUpdate(
-                            pedido.id,
-                            "CANCELADO",
-                            "Pedido cancelado."
-                          )
-                        }
-                      >
-                        <i className="bi bi-x-circle me-1"></i> Cancelar
-                      </Button>
-                    </>
-                  )}
-
-                  {user.role === "cliente" && (
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() =>
-                        handleStatusUpdate(
-                          pedido.id,
-                          "CANCELADO",
-                          "Pedido cancelado."
-                        )
-                      }
-                    >
-                      <i className="bi bi-x-circle me-1"></i> Cancelar Pedido
-                    </Button>
                   )}
                 </Card.Body>
               )}
@@ -330,7 +352,6 @@ const PedidosPage = () => {
         })
       )}
 
-      {/* Modal */}
       <Modal show={showModal} onHide={handleModalClose} centered>
         <Modal.Header closeButton className="bg-primary bg-opacity-10">
           <Modal.Title>
@@ -345,6 +366,20 @@ const PedidosPage = () => {
             onCancel={handleModalClose}
           />
         </Modal.Body>
+      </Modal>
+
+      <Modal show={showCancelModal} onHide={handleCancelModalClose} centered>
+        <Modal.Header closeButton className="bg-danger bg-opacity-10">
+          <Modal.Title className="text-danger">
+            <i className="bi bi-exclamation-triangle-fill me-2 text-danger"></i>
+            Cancelamento de Pedido
+          </Modal.Title>
+        </Modal.Header>
+        <PedidoFormCompCancelar
+            pedidoId={cancelingPedido?.id}
+            onCancel={handleCancelModalClose}
+            onConfirm={handleConfirmCancel}
+        />
       </Modal>
     </Container>
   );
