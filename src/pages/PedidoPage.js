@@ -20,9 +20,9 @@ import { useAlert } from "../context/AlertContext";
 const PedidosPage = () => {
   const { user, fetchClientData } = useAuth();
   const { showAlert } = useAlert();
-
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [processandoPedidoId, setProcessandoPedidoId] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -110,6 +110,7 @@ const PedidosPage = () => {
 
   const handleStatusUpdate = useCallback(
     async (pedidoId, newStatus, successMessage, motivoCancelamento = null) => {
+      setProcessandoPedidoId(pedidoId);
       try {
         const payload = { status: newStatus };
         if (newStatus === "CANCELADO" && motivoCancelamento) {
@@ -136,6 +137,8 @@ const PedidosPage = () => {
           duration: 5000,
         });
         return false;
+      }finally {
+        setProcessandoPedidoId(null);
       }
     },
     [showAlert, loadPedidos]
@@ -246,19 +249,19 @@ const PedidosPage = () => {
                         } me-1`}
                       ></i>
                       <span className="text-black">{pedido.status}</span>
-
                     </Badge>
-                    {pedido.status === "CANCELADO" && pedido.motivo_cancelamento && (
-                    <ListGroup.Item className="d-flex mt-2 flex-column align-items-start bg-danger bg-opacity-25 border-danger ">
-                        <div className="mb-1">
+                    {pedido.status === "CANCELADO" &&
+                      pedido.motivo_cancelamento && (
+                        <ListGroup.Item className="d-flex mt-2 flex-column align-items-start bg-danger bg-opacity-25 border-danger ">
+                          <div className="mb-1">
                             <i className="bi bi-info-circle me-2 text-danger"></i>
-                            <span className="fw-medium text-danger">Motivo do Cancelamento:</span>
-                        </div>
-                        <div>
-                            {pedido.motivo_cancelamento}
-                        </div>
-                    </ListGroup.Item>
-                )}
+                            <span className="fw-medium text-danger">
+                              Motivo do Cancelamento:
+                            </span>
+                          </div>
+                          <div>{pedido.motivo_cancelamento}</div>
+                        </ListGroup.Item>
+                      )}
                   </Col>
                 </Row>
               </Card.Header>
@@ -318,7 +321,8 @@ const PedidosPage = () => {
                     size="sm"
                     onClick={() => handleEditClick(pedido)}
                   >
-                    <i className="bi bi-pencil-square me-1"></i> Alterar pagamento
+                    <i className="bi bi-pencil-square me-1"></i> Alterar
+                    pagamento
                   </Button>
 
                   {(user.role === "admin" || user.role === "cliente") && (
@@ -331,19 +335,32 @@ const PedidosPage = () => {
                     </Button>
                   )}
                   {user.role === "admin" && (
-                     <Button
-                        variant="success"
-                        size="sm"
-                        onClick={() =>
-                          handleStatusUpdate(
-                            pedido.id,
-                            "PAGO",
-                            "Pedido marcado como pago"
-                          )
-                        }
-                      >
-                        <i className="bi bi-check-circle me-1"></i> Pedido pago
-                      </Button>
+                    <Button
+                      variant="success"
+                      size="sm"
+                      disabled={processandoPedidoId === pedido.id}
+                      onClick={() =>
+                        handleStatusUpdate(
+                          pedido.id,
+                          "PAGO",
+                          "Pedido marcado como pago"
+                        )
+                      }
+                    >
+                      {processandoPedidoId === pedido.id ? (
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                          className="me-1"
+                        />
+                      ) : (
+                        <i className="bi bi-check-circle me-1"></i>
+                      )}
+                      Pedido pago
+                    </Button>
                   )}
                 </Card.Body>
               )}

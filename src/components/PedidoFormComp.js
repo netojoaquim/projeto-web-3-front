@@ -45,7 +45,6 @@ const PedidoFormComp = ({ pedidoData, onSuccess, onCancel }) => {
         metodoPagamento: metodoPagamentoSelecionado,
       });
 
-      // 🔹 Apenas define sucesso local e chama o callback de sucesso
       setSuccessMessage("Método de pagamento alterado com sucesso!");
       
       if (onSuccess) {
