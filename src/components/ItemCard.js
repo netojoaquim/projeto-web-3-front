@@ -17,6 +17,7 @@ const ItemCard = ({ item }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
   const { showAlert } = useAlert();
+  const estq=item.estoque - item.estoque_reservado;
 
   if (!item) return null;
 
@@ -41,7 +42,7 @@ const ItemCard = ({ item }) => {
       );
       const currentQty = itemInCart?.quantidade || 0;
 
-      if (currentQty + quantity > item.estoque) {
+      if (currentQty + quantity > estq) {
         showAlert({
           title: "Aviso!",
           message: "Quantidade solicitada excede o estoque disponível.",
@@ -156,7 +157,7 @@ const ItemCard = ({ item }) => {
                       value={quantity}
                       onChange={(e) => {
                         const value = Math.max(1, parseInt(e.target.value) || 1);
-                        setQuantity(Math.min(value, item.estoque || 1));
+                        setQuantity(Math.min(value, estq || 1));
                       }}
                       className="text-center mx-2"
                       style={{ width: '5em' }}
@@ -165,8 +166,8 @@ const ItemCard = ({ item }) => {
 
                     <Button
                       variant="outline-secondary"
-                      onClick={() => setQuantity(q => Math.min(q + 1, item.estoque || 1))}
-                      disabled={quantity >= (item.estoque || 1) || isLoading}
+                      onClick={() => setQuantity(q => Math.min(q + 1, estq || 1))}
+                      disabled={quantity >= (estq || 1) || isLoading}
                     >
                       +
                     </Button>
@@ -176,7 +177,7 @@ const ItemCard = ({ item }) => {
 
               <p className="mt-2 mb-0">
                 <b>Estoque disponível:</b>{' '}
-                {item.estoque !== undefined ? item.estoque : 'Indisponível'}
+                {estq !== undefined ? estq : 'Indisponível'}
               </p>
             </div>
           </div>
@@ -188,7 +189,7 @@ const ItemCard = ({ item }) => {
           <Button
             variant="primary"
             onClick={handleAddToCart}
-            disabled={isLoading || (currentQtyInCart + quantity > item.estoque)||user?.role==="admin"}
+            disabled={isLoading || (currentQtyInCart + quantity > estq)||user?.role==="admin"}
           >
             {isLoading ? 'Adicionando...' : (
               <>
