@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Spinner, Alert, Form, InputGroup } from 'react-bootstrap';
 // Certifique-se de que os caminhos de importação para api e ItemCard estão corretos
-import api from '../api/api'; 
+import api from '../api/api';
 import ItemCard from '../components/ItemCard';
 
 const Home = () => {
@@ -26,7 +26,7 @@ const Home = () => {
             try {
                 const response = await api.get(PRODUCTS_ENDPOINT);
                 const produtosData = response.data.data || response.data;
-                const produtosAtivos = produtosData.filter(prod => prod.ativo === true);
+                const produtosAtivos = produtosData.filter(prod => prod.ativo === true && (prod.estoque-prod.estoque_reservado) > 0);
 
                 setProdutos(produtosAtivos);
                 setFilteredProdutos(produtosAtivos);
