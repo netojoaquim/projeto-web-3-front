@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useAlert } from '../context/AlertContext';
 
 const ClienteFormComp = ({ clienteData, onSuccess, onCancel }) => {
-  const { updateClienteRoleAtivo  } = useAuth(); // Função que atualiza o cliente no backend
+  const { updateClienteRoleAtivo  } = useAuth();
   const [form, setForm] = useState({
     role: clienteData?.role || 'cliente',
     ativo: clienteData?.ativo ?? true,

@@ -91,7 +91,7 @@ const ItemCard = ({ item }) => {
           variant="top"
           src={imageUrl}
           alt={item.nome || 'Produto'}
-          style={{ height: '180px', objectFit: 'cover' }}
+          style={{ height: 'auto', objectFit: 'cover' }}
         />
         <Card.Body>
           <Card.Title className="text-truncate" title={item.nome || ''}>

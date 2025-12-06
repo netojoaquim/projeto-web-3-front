@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './Header'; 
+import Header from './Header';
 
 const MainLayout = ({ children }) => {
   return (
@@ -8,7 +8,6 @@ const MainLayout = ({ children }) => {
       <main className="container mt-4">
         {children}
       </main>
-      {/* Opcional: <Footer /> */}
     </>
   );
 };

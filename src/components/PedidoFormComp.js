@@ -46,7 +46,7 @@ const PedidoFormComp = ({ pedidoData, onSuccess, onCancel }) => {
       });
 
       setSuccessMessage("Método de pagamento alterado com sucesso!");
-      
+
       if (onSuccess) {
         onSuccess("Método de pagamento alterado com sucesso!");
       }

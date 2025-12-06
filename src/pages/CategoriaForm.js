@@ -112,7 +112,6 @@ const Categoria = () => {
     setCategoriaToDelete(null);
   };
 
-  // Estado de carregamento
   if (loading)
     return (
       <Container className="mt-5 text-center">

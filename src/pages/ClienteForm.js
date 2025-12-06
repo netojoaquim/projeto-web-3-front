@@ -13,7 +13,7 @@ import { useAuth } from '../context/AuthContext';
 import ClienteFormComp from '../components/ClienteFormComp';
 
 const ClienteForm = () => {
-  const { fetchClientes } = useAuth(); // precisa existir no seu contexto
+  const { fetchClientes } = useAuth();
   const [clientes, setClientes] = useState([]);
   const [filteredClientes, setFilteredClientes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,6 @@ const ClienteForm = () => {
   const [editingCliente, setEditingCliente] = useState(null);
   const [search, setSearch] = useState('');
 
-  // 🔹 Carregar clientes
   const loadClientes = useCallback(async () => {
     setLoading(true);
     setMessage('');
@@ -54,7 +53,6 @@ const ClienteForm = () => {
     loadClientes();
   }, [loadClientes]);
 
-  // 🔹 Filtro de pesquisa
   useEffect(() => {
     const lowerSearch = search.toLowerCase();
     const filtered = clientes.filter((c) =>
@@ -63,7 +61,6 @@ const ClienteForm = () => {
     setFilteredClientes(filtered);
   }, [search, clientes]);
 
-  // 🔹 Modal de editar cliente
   const handleEditClick = (cliente) => {
     setEditingCliente(cliente);
     setShowModal(true);
@@ -74,7 +71,6 @@ const ClienteForm = () => {
     setEditingCliente(null);
   };
 
-  // 🔹 Estado de carregamento
   if (loading)
     return (
       <Container className="mt-5 text-center">
@@ -152,7 +148,6 @@ const ClienteForm = () => {
         </ListGroup>
       )}
 
-      {/* 🔹 Modal de edição */}
       <Modal show={showModal} onHide={handleModalClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>Editar Cliente</Modal.Title>

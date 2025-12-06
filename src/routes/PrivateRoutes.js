@@ -13,10 +13,8 @@ const PrivateRoute = ({ allowedRoles }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // Garante que pega o papel do usuário corretamente
   const userRole = user?.role || user?.tipo || user?.perfil || '';
 
-  // Se houver restrição de roles e o usuário não tiver permissão
   if (allowedRoles && !allowedRoles.includes(userRole)) {
     return <Navigate to="/" replace />;
   }

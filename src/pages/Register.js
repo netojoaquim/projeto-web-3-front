@@ -7,8 +7,6 @@ import { useAlert } from "../context/AlertContext";
 const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
-
-  // Estado para os campos: Nome completo, Email, Senha, Confirmação e Telefone
   const [formData, setFormData] = useState({
     nome_completo: "",
     email: "",
@@ -66,18 +64,15 @@ const Register = () => {
 
     setFormData({ ...formData, [name]: newValue });
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
     setError(false);
 
-    // ----------------------------------------------------
     // VALIDAÇÃO E LIMPEZA DE DADOS
-    // ----------------------------------------------------
 
-    // 1. Validação de Confirmação de Senha
     if (formData.senha !== formData.confirmacaoSenha) {
       setError(true);
       showAlert({
@@ -91,7 +86,6 @@ const Register = () => {
       return;
     }
 
-    // 2. Validação Mínima de Senha
     if (formData.senha.trim().length < 6) {
       setError(true);
       showAlert({
@@ -104,7 +98,6 @@ const Register = () => {
       setLoading(false);
       return;
     }
-    // 4. Validação de telefone
     const telefoneNumeros = formData.numero_telefone.replace(/\D/g, "");
     if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
       setError(true);
@@ -119,20 +112,15 @@ const Register = () => {
       return;
     }
 
-    // 3. Limpeza de Dados (TRIM e LOWERCASE)
     const userDataToSend = {
       nome_completo: formData.nome_completo.trim(),
-      email: formData.email.trim().toLowerCase(), // Trim e Lowercase
-      senha: formData.senha.trim(), // Trim na senha
+      email: formData.email.trim().toLowerCase(),
+      senha: formData.senha.trim(),
       numero_telefone: formData.numero_telefone,
       data_nascimento: formData.data_nascimento,
 
-      // A 'confirmacaoSenha' não é enviada para o backend
     };
 
-    // ----------------------------------------------------
-
-    // Chama a função de registro do Contexto
     const result = await register(userDataToSend);
 
     if (result.success) {
@@ -177,7 +165,6 @@ const Register = () => {
       )}
 
       <Form onSubmit={handleSubmit}>
-        {/* Nome Completo */}
         <Form.Group className="mb-3" controlId="formNomeCompleto">
           <Form.Label>Nome Completo</Form.Label>
           <Form.Control
@@ -189,7 +176,6 @@ const Register = () => {
           />
         </Form.Group>
 
-        {/* Email */}
         <Form.Group className="mb-3" controlId="formEmail">
           <Form.Label>Email</Form.Label>
           <Form.Control
@@ -204,7 +190,7 @@ const Register = () => {
         <Form.Group className="mb-3" controlId="formDataNascimento">
           <Form.Label>Data de Nascimento</Form.Label>
           <Form.Control
-            type="date" // Isso garante o formato YYYY-MM-DD
+            type="date"
             name="data_nascimento"
             value={formData.data_nascimento}
             onChange={handleChange}
@@ -224,7 +210,6 @@ const Register = () => {
           />
         </Form.Group>
 
-        {/* Senha */}
         <Form.Group className="mb-3" controlId="formSenha">
           <Form.Label>Senha</Form.Label>
           <InputGroup>
@@ -250,7 +235,6 @@ const Register = () => {
           </Form.Text>
         </Form.Group>
 
-        {/* NOVO CAMPO: Confirmação de Senha */}
         <Form.Group className="mb-3" controlId="formConfirmacaoSenha">
           <Form.Label>Confirme a Senha</Form.Label>
           <InputGroup>
@@ -272,8 +256,6 @@ const Register = () => {
                   </Button>
                 </InputGroup>
         </Form.Group>
-
-        {/* Telefone */}
 
         <Button
           variant="primary"

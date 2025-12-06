@@ -25,8 +25,7 @@ const Home = () => {
             setError(null);
             try {
                 const response = await api.get(PRODUCTS_ENDPOINT);
-                // Assumindo que a API retorna os dados corretamente
-                const produtosData = response.data.data || response.data; 
+                const produtosData = response.data.data || response.data;
                 const produtosAtivos = produtosData.filter(prod => prod.ativo === true);
 
                 setProdutos(produtosAtivos);
@@ -46,7 +45,7 @@ const Home = () => {
         const fetchCategories = async () => {
             try {
                 const response = await api.get(CATEGORIES_ENDPOINT);
-                setCategorias(response.data || []); // Garante que categorias seja um array
+                setCategorias(response.data || []);
             } catch (err) {
                 console.error("Erro ao buscar categorias:", err);
             }
@@ -54,25 +53,21 @@ const Home = () => {
         fetchCategories();
     }, []);
 
-    // Efeito para filtrar os produtos
     useEffect(() => {
         let filtered = produtos;
 
-        // Filtro por termo de busca
         if (searchTerm.trim() !== '') {
             filtered = filtered.filter(prod =>
                 prod.nome.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
 
-        // Filtro por categoria
         if (selectedCategory) {
             filtered = filtered.filter(prod =>
                 prod.categoria?.id === parseInt(selectedCategory)
             );
         }
 
-        // Filtro por preço
         const min = parseFloat(precoMinimo) || 0;
         const max = parseFloat(precoMaximo) || Infinity;
 
@@ -105,14 +100,9 @@ const Home = () => {
         <Container className="mt-0">
             <h1 className="mb-4">Nossos Produtos</h1>
 
-            {/* 🔍 Contêiner de Filtros com Grid Bootstrap (className) */}
-            {/* g-2 adiciona espaçamento (gutter) entre as colunas/linhas */}
             <div className="row g-2 mb-4">
                 
-                {/* 1. Campo de pesquisa: 
-                    col-12 (100% em mobile)
-                    col-lg-9 (75% em desktop)
-                */}
+
                 <div className="col-12 col-lg-9">
                     <InputGroup>
                         <InputGroup.Text>
@@ -127,11 +117,6 @@ const Home = () => {
                     </InputGroup>
                 </div>
 
-                {/* 2. Seletor de categoria: 
-                    col-12 (100% em mobile)
-                    col-lg-3 (25% em desktop)
-                    Total da Linha 1 em LG: 9 + 3 = 12 (Completo)
-                */}
                 <div className="col-12 col-lg-3">
                     <Form.Select
                         value={selectedCategory}
@@ -146,11 +131,7 @@ const Home = () => {
                     </Form.Select>
                 </div>
 
-                {/* 3. Preço Mínimo: 
-                    col-12 (100% em mobile)
-                    offset-lg-6 (Empurra 50% para a direita em desktop)
-                    col-lg-3 (25% em desktop)
-                */}
+
                 <div className="col-12 col-lg-3 offset-lg-6"> 
                     <Form.Control
                         type="number"
@@ -160,11 +141,7 @@ const Home = () => {
                     />
                 </div>
 
-                {/* 4. Preço Máximo: 
-                    col-12 (100% em mobile)
-                    col-lg-3 (25% em desktop)
-                    Total da Linha 2 em LG: (offset 6) + 3 + 3 = 12 (Completo, alinhado à direita)
-                */}
+
                 <div className="col-12 col-lg-3">
                     <Form.Control
                         type="number"
@@ -176,7 +153,6 @@ const Home = () => {
             </div>
 
 
-            {/* 🧱 Lista de produtos (Mantido como estava, usando grid) */}
             {filteredProdutos.length === 0 ? (
                 <Alert variant="info">Nenhum produto encontrado.</Alert>
             ) : (

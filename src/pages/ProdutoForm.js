@@ -23,7 +23,6 @@ const ProdutoForm = () => {
   const [productToDelete, setProductToDelete] = useState(null);
   const { showAlert } = useAlert();
 
-  // 🔹 Carrega produtos do backend
   const loadProdutos = useCallback(async () => {
     try {
       setLoading(true);
@@ -48,12 +47,10 @@ const ProdutoForm = () => {
     }
   }, [fetchAllProducts]);
 
-  // 🔹 Executa uma vez no carregamento
   useEffect(() => {
     loadProdutos();
   }, [loadProdutos]);
 
-  // 🔹 Filtro de busca
   useEffect(() => {
     if (!search.trim()) {
       setFilteredProdutos(produtos);
@@ -67,7 +64,6 @@ const ProdutoForm = () => {
     setFilteredProdutos(filtered);
   }, [search, produtos]);
 
-  // 🔹 Funções auxiliares
   const handleAddClick = () => navigate('/produto/novo');
   const handleEditClick = (produto) => {
     setEditingProduct(produto);
@@ -204,7 +200,6 @@ const ProdutoForm = () => {
         </ListGroup>
       )}
 
-      {/* Modal editar */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>
@@ -220,7 +215,6 @@ const ProdutoForm = () => {
         </Modal.Body>
       </Modal>
 
-      {/* Modal exclusão */}
       <Modal
         show={showDeleteModal}
         onHide={() => setShowDeleteModal(false)}
