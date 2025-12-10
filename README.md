@@ -20,7 +20,7 @@ Este é um projeto de e-commerce com **frontend em React**.
     ```ini
     npm i
     ```
-4.    **execute o projeto**
+4. **execute o projeto**
     ```ini
     npm run start
     ```
