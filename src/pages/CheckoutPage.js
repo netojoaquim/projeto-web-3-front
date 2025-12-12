@@ -323,7 +323,7 @@ const CheckoutPage = () => {
 
         {/* resumo */}
         <Col md={5}>
-          <Card className="sticky-top" style={{ top: "20px" }}>
+          <Card className="position-md-sticky" >
             <Card.Header as="h5">
               <strong className="text-primary">Resumo do Pedido</strong>
             </Card.Header>
