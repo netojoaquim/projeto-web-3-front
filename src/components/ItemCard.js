@@ -17,6 +17,7 @@ const ItemCard = ({ item }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
   const { showAlert } = useAlert();
+
   const estq=item.estoque - item.estoque_reservado;
 
   if (!item) return null;
@@ -110,7 +111,7 @@ const ItemCard = ({ item }) => {
 
       <Modal show={showModal} onHide={handleClose} centered size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>{item.nome || 'Produto'}</Modal.Title>
+          <Modal.Title className='mb-3'>{item.nome || 'Produto'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {feedback && <Alert variant={feedback.type}>{feedback.message}</Alert>}
@@ -130,13 +131,13 @@ const ItemCard = ({ item }) => {
             </div>
 
             <div>
-              <p className="fw-bold fs-4 text-primary">
+              <p className="fw-bold fs-4 mt-2 text-primary">
                 {item.preco !== undefined
                   ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.preco)
                   : 'Valor indisponível'}
               </p>
 
-              <h3 className="h5 mt-3">Descrição Completa</h3>
+              <h6 className="h6 mt-3">Descrição Completa:</h6>
               <p>{item.descricao || 'Sem descrição detalhada.'}</p>
 
               <Form.Group controlId="formQuantity" className="mt-4">

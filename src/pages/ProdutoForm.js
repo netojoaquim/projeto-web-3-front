@@ -156,7 +156,7 @@ const ProdutoForm = () => {
               key={prod.id}
               className="d-flex justify-content-between align-items-start align-items-md-center gap-3 p-3"
             >
-              <div className="d-flex flex-column flex-md-row align-items-md-center gap-3 w-100">
+              <div className="d-flex row flex-md-wrap align-items-md-center gap-3 w-100">
                 <img
                   src={`${process.env.REACT_APP_BASE_URL}/uploads/${prod.imagem}`}
                   alt={prod.nome}

@@ -13,6 +13,9 @@ const Header = () => {
   const { handleShowCart } = useLayout();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const { showAlert } = useAlert();
+  const [expanded, setExpanded] = useState(false);
+
+  const closeNav = () => setExpanded(false);
 
   const totalItems = cartState.items.reduce(
     (acc, item) => acc + item.quantity,
@@ -33,7 +36,7 @@ const Header = () => {
   const handleShowProfileModal = () => setShowProfileModal(true);
 
   return (
-    <Navbar bg="light" expand="lg" sticky="top" className="shadow-sm py-2 d-flex justify-content-between">
+    <Navbar bg="light" expand="lg" sticky="top" className="shadow-sm py-2 d-flex justify-content-between" expanded={expanded} onToggle={setExpanded}>
       <Container>
         <LinkContainer to="/">
           <Navbar.Brand className="fw-bold fs-4 text-primary d-flex align-items-center">
@@ -65,7 +68,7 @@ const Header = () => {
           <Nav className="d-grid gap-1 d-lg-flex align-items-center mt-3 mt-lg-0">
 
             {/* para todos */}
-            <LinkContainer to="/">
+            <LinkContainer to="/" onClick={closeNav}>
               <Button
                 variant="primary"
                 className="d-flex align-items-center justify-content-center w-100"
@@ -80,7 +83,7 @@ const Header = () => {
                 {/*ADMIN */}
                 {user?.role === "admin" && (
                   <>
-                    <LinkContainer to="/produto">
+                    <LinkContainer to="/produto" onClick={closeNav}>
                       <Button
                         variant="primary"
                         className="d-flex align-items-center justify-content-center w-100 "
@@ -89,7 +92,7 @@ const Header = () => {
                       </Button>
                     </LinkContainer>
 
-                    <LinkContainer to="/cliente">
+                    <LinkContainer to="/cliente" onClick={closeNav}>
                       <Button
                         variant="primary"
                         className="d-flex align-items-center justify-content-center w-100"
@@ -98,7 +101,7 @@ const Header = () => {
                       </Button>
                     </LinkContainer>
 
-                    <LinkContainer to="/produto/categoria">
+                    <LinkContainer to="/produto/categoria" onClick={closeNav}>
                       <Button
                         variant="primary"
                         className="d-flex align-items-center justify-content-center w-100"
@@ -107,7 +110,7 @@ const Header = () => {
                       </Button>
                     </LinkContainer>
 
-                    <LinkContainer to="/cliente/pedidos">
+                    <LinkContainer to="/cliente/pedidos" onClick={closeNav}>
                       <Button
                         variant="primary"
                         className="d-flex align-items-center justify-content-center w-100"
@@ -121,7 +124,7 @@ const Header = () => {
                 {/* cliente */}
                 {user?.role === "cliente" && (
                   <>
-                    <LinkContainer to="/cliente/pedidos">
+                    <LinkContainer to="/cliente/pedidos" onClick={closeNav}>
                       <Button
                         variant="primary"
                         className="d-flex align-items-center justify-content-center text-truncate w-100"
@@ -161,7 +164,7 @@ const Header = () => {
             ) : (
               /* publico */
               <Nav className="d-grid gap-1 d-lg-flex align-items-center mt-3 mt-lg-0">
-                <LinkContainer to="/login" className="flex-fill w-50">
+                <LinkContainer to="/login" className="flex-fill w-50" onClick={closeNav}>
                   <Button
                     variant="primary"
                     className="d-flex align-items-center justify-content-center text-truncate w-100 position-relative"
@@ -170,7 +173,7 @@ const Header = () => {
                   </Button>
                 </LinkContainer>
 
-                <LinkContainer to="/registro" className="flex-fill w-50">
+                <LinkContainer to="/registro" className="flex-fill w-50" onClick={closeNav}>
                   <Button
                     variant="primary"
                     className="d-flex align-items-center justify-content-center text-truncate w-100 position-relative"

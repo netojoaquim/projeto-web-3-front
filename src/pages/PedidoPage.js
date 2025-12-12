@@ -280,6 +280,13 @@ const PedidosPage = () => {
                     <div>{formatCurrency(item.valor * item.quantidade)}</div>
                   </ListGroup.Item>
                 ))}
+                  {user.role === "admin" && (
+                    <ListGroup.Item className="d-flex align-items-center">
+                      <i className="bi bi-person me-2 text-primary"></i>
+                      <strong className="text-primary p-2">cliente:</strong>
+                      {pedido.cliente.nome_completo} — {pedido.cliente.email}
+                    </ListGroup.Item>
+                  )}
 
                 <ListGroup.Item className="d-flex justify-content-between bg-light fw-bold">
                   <span className="text-primary">Total do Pedido</span>

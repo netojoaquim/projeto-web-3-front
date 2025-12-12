@@ -16,7 +16,7 @@ Este é um projeto de e-commerce com **frontend em React**.
     ```ini
     REACT_APP_BASE_URL=http://localhost:5000
     ```
-3. **instale as dependências do projeto**
+3. **Instale as dependências do projeto**
     ```ini
     npm i
     ```

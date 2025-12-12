@@ -15,6 +15,9 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useCart } from "../context/CarrinhoContext";
 import { useAlert } from "../context/AlertContext";
+import PagamentoCartaoForm from "../components/PagamentoCartaoComp";
+import PagamentoPixForm from "../components/PagamentoPixComp";
+import PagamentoBoletoForm from "../components/PagamentoBoletoComp";
 
 const CheckoutPage = () => {
   const { user } = useAuth();
@@ -23,13 +26,27 @@ const CheckoutPage = () => {
   const [total, setTotal] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  const {cartUpdateSignal, fetchCart } = useCart();
+  const { cartUpdateSignal, fetchCart } = useCart();
   const [cartItems, setCartItems] = useState([]);
   const enderecoPadrao = user?.enderecos?.find((addr) => addr.padrao === true);
   const { showAlert } = useAlert();
-  const {limparCarrinho} = useCart();
+  const { limparCarrinho } = useCart();
   const navigate = useNavigate();
 
+  const [cardDetails, setCardDetails] = useState({
+    numeroCartao: "",
+    nomeTitular: "",
+    codigoVerificador: "",
+    validade: "",
+  });
+  const [pixDetails, setPixDetails] = useState({
+    chavePix: user?.cpf || user?.email || "",
+    qrCode: "",
+  });
+  const [boletoDetails, setBoletoDetails] = useState({
+    codigoBarras: "",
+    dataVencimento: "",
+  });
 
   useEffect(() => {
     const userId = user?.id || user?.clienteId;
@@ -60,7 +77,6 @@ const CheckoutPage = () => {
     };
 
     loadCartData();
-
   }, [user, fetchCart, cartUpdateSignal]);
 
   const handleFinalizarCompra = async () => {
@@ -76,6 +92,26 @@ const CheckoutPage = () => {
     const totalCalculado = cartItems
       .map((item) => parseFloat(item.produto.preco) * item.quantidade)
       .reduce((acc, val) => acc + val, 0);
+    let detalhesPagamento = {};
+
+    if (paymentMethod === "Cartao") {
+      detalhesPagamento = cardDetails;
+      if (!Object.values(cardDetails).every((val) => val)) {
+        showAlert({
+          title: "Erro!",
+          message: "Preencha todos os dados do cartão.",
+          type: "danger",
+          duration: 5000,
+          bg: "#ff0000",
+        });
+        setLoading(false);
+        return;
+      }
+    } else if (paymentMethod === "Pix") {
+      detalhesPagamento = pixDetails;
+    } else if (paymentMethod === "Boleto") {
+      detalhesPagamento = boletoDetails;
+    }
 
     const pedidoData = {
       userId: userId,
@@ -83,6 +119,7 @@ const CheckoutPage = () => {
       total: totalCalculado,
       enderecoEntrega: { id: enderecoPadrao.id },
       metodoPagamento: paymentMethod.toUpperCase(),
+      ...detalhesPagamento,
     };
 
     try {
@@ -93,7 +130,7 @@ const CheckoutPage = () => {
 
       showAlert({
         title: "Aviso!",
-        message: "Compra finalizada com sucesso!",
+        message: "Pedido finalizado com sucesso!",
         type: "warning",
         duration: 5000,
         bg: "#0d6efd",
@@ -104,7 +141,7 @@ const CheckoutPage = () => {
       console.error("Erro ao finalizar compra:", err.response?.data || err);
       showAlert({
         title: "Erro!",
-        message: "Erro ao finalizar compra. Tente novamente.",
+        message: "Erro ao finalizar pedido. Tente novamente.",
         type: "warning",
         duration: 5000,
         bg: "#ff0000",
@@ -206,12 +243,9 @@ const CheckoutPage = () => {
 
           {/* pagamento */}
           <Card className="mb-3">
-            <Card.Header as="h5">
-              <i className="bi bi-credit-card-2-back text-primary"></i>
-              <strong className="p-2 text-primary">Forma de Pagamento</strong>
-            </Card.Header>
             <Card.Body>
               <Form>
+                {/*  cartao */}
                 <Form.Check
                   type="radio"
                   id="pagamento-cartao"
@@ -227,6 +261,8 @@ const CheckoutPage = () => {
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="mb-2"
                 />
+
+                {/* pix */}
                 <Form.Check
                   type="radio"
                   id="pagamento-pix"
@@ -241,6 +277,8 @@ const CheckoutPage = () => {
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="mb-2"
                 />
+
+                {/* boleto */}
                 <Form.Check
                   type="radio"
                   id="pagamento-boleto"
@@ -255,6 +293,22 @@ const CheckoutPage = () => {
                   checked={paymentMethod === "Boleto"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
+
+                {paymentMethod === "Cartao" && (
+                  <PagamentoCartaoForm
+                    details={cardDetails}
+                    setDetails={setCardDetails}
+                  />
+                )}
+
+                {paymentMethod === "Pix" && (
+                  <PagamentoPixForm
+                    details={pixDetails}
+                    setDetails={setPixDetails}
+                  />
+                )}
+
+                {paymentMethod === "Boleto" && <PagamentoBoletoForm />}
               </Form>
             </Card.Body>
           </Card>
@@ -308,7 +362,7 @@ const CheckoutPage = () => {
                 size="md"
                 className="w-100"
                 onClick={handleFinalizarCompra}
-                disabled={loading || !enderecoPadrao ||!paymentMethod}
+                disabled={loading || !enderecoPadrao || !paymentMethod}
               >
                 {loading ? (
                   <Spinner

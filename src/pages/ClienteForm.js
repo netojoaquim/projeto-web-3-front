@@ -81,28 +81,30 @@ const ClienteForm = () => {
 
   return (
     <Container
-      style={{ maxWidth: '900px' }}
+      style={{ maxWidth: "900px" }}
       className="mt-5 mb-5 p-4 border rounded shadow-sm"
     >
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="text-primary me-3"><i className="bi bi-people-fill me-2"></i>Usuários</h2>
+        <h2 className="text-primary me-3">
+          <i className="bi bi-people-fill me-2"></i>Usuários
+        </h2>
       </div>
-      <InputGroup className='w-md-50 mb-4 ms-auto'>
-          <Form.Control
-            type="text"
-            placeholder="Pesquisar por nome..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Button variant="primary" onClick={() => setSearch('')}>
-            <i className="bi bi-x-circle"></i>
-          </Button>
-        </InputGroup>
+      <InputGroup className="w-md-50 mb-4 ms-auto">
+        <Form.Control
+          type="text"
+          placeholder="Pesquisar por nome..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Button variant="primary" onClick={() => setSearch("")}>
+          <i className="bi bi-x-circle"></i>
+        </Button>
+      </InputGroup>
 
       {message && (
         <Alert
-          variant={error ? 'danger' : 'success'}
-          onClose={() => setMessage('')}
+          variant={error ? "danger" : "success"}
+          onClose={() => setMessage("")}
           dismissible
         >
           {message}
@@ -118,19 +120,19 @@ const ClienteForm = () => {
           {filteredClientes.map((cliente) => (
             <ListGroup.Item
               key={cliente.id}
-              className="d-flex justify-content-between align-items-center"
+              className="d-flex justify-content-between align-items-start align-items-md-center gap-3 p-3"
             >
-              <div className='w-75'>
+              <div className="w-75">
                 <p className="mb-0 fw-bold">{cliente.nome_completo}</p>
-                <p className="mb-0 text-muted" style={{ fontSize: '0.9rem' }}>
+                <p className="mb-0 text-muted" style={{ fontSize: "0.9rem" }}>
                   {cliente.email}
                 </p>
-                <p className="mb-0 text-muted" style={{ fontSize: '0.85rem' }}>
-                  Nível do usuário: <b>{cliente.role}</b> |{' '}
+                <p className="mb-0 text-muted" style={{ fontSize: "0.85rem" }}>
+                  Nível do usuário: <b>{cliente.role}</b> |{" "}
                   <span
-                    className={cliente.ativo ? 'text-success' : 'text-danger'}
+                    className={cliente.ativo ? "text-success" : "text-danger"}
                   >
-                    {cliente.ativo ? 'Ativo' : 'Inativo'}
+                    {cliente.ativo ? "Ativo" : "Inativo"}
                   </span>
                 </p>
               </div>
