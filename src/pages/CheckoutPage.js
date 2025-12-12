@@ -139,9 +139,12 @@ const CheckoutPage = () => {
       navigate("/cliente/pedidos");
     } catch (err) {
       console.error("Erro ao finalizar compra:", err.response?.data || err);
+      const errorMessage =
+        err.response?.data?.message ||
+        "Erro ao finalizar pedido. Tente novamente.";
       showAlert({
         title: "Erro!",
-        message: "Erro ao finalizar pedido. Tente novamente.",
+        message:errorMessage,
         type: "warning",
         duration: 5000,
         bg: "#ff0000",
@@ -308,7 +311,11 @@ const CheckoutPage = () => {
                   />
                 )}
 
-                {paymentMethod === "Boleto" && <PagamentoBoletoForm />}
+                {paymentMethod === "Boleto" && (
+                   <PagamentoBoletoForm
+                   details={boletoDetails}
+                   setDetails={setBoletoDetails}
+                   />)}
               </Form>
             </Card.Body>
           </Card>
