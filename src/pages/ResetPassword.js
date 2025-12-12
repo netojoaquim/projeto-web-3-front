@@ -67,6 +67,16 @@ export default function ResetPassword() {
       });
       return;
     }
+    if (userNewPassword.length < 6 || userNewConfirmPassword.length < 6) {
+      showAlert({
+        title: "Erro",
+        message: "A senha deve ter no mínimo 6 caracteres",
+        type: "error",
+        duration: 5000,
+        bg: "#ff0000",
+      });
+      return;
+    }
 
     if (userNewPassword !== userNewConfirmPassword) {
       showAlert({
@@ -91,9 +101,8 @@ export default function ResetPassword() {
         message: result.message,
         type: "success",
         duration: 5000,
-        bg: result.success ? "#0d6efd" : "#ff0000"
+        bg: result.success ? "#0d6efd" : "#ff0000",
       });
-
     } catch (error) {
       console.error("Erro ao redefinir senha:", error);
       showAlert({
